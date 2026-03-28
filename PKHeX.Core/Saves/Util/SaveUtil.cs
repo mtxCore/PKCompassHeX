@@ -35,13 +35,10 @@ public static class SaveUtil
     private const int SIZE_G9_3P1 = SIZE_G9_3B1 + 0x5; // GO (before Multiplayer)
     private const int SIZE_G9_3A1 = 0x31CA6F; //          1.0.1 -> 1.1.0 -> 1.2.0 AM
     private const int SIZE_G9_3G1 = SIZE_G9_3A1 + 0x5; // GO
-
-	private const int SIZE_G9_3B0 = SIZE_G9_3A0 - 0xD; // BM
-	private const int SIZE_G9_3P0 = SIZE_G9_3B0 + 0x5; // GO (before Multiplayer)
-
-    // 2.0.1 (2.0.0 skipped): Teal Mask
-        private const int SIZE_G9_3A0 = 0x31CF7C; // 1.0.0 -> 1.0.1 -> 1.1.0 -> 1.2.0 AM
-        private const int SIZE_G9_3G0 = SIZE_G9_3A0 + 0x5; // GO
+    private const int SIZE_G9_3A0 = 0x31CF7C; // 1.0.0 -> 1.0.1 -> 1.1.0 -> 1.2.0 AM
+    private const int SIZE_G9_3G0 = SIZE_G9_3A0 + 0x5; // GO
+    private const int SIZE_G9_3B0 = SIZE_G9_3A0 - 0xD; // BM
+    private const int SIZE_G9_3P0 = SIZE_G9_3B0 + 0x5; // GO (before Multiplayer)
 
     // 3.0.0: The Indigo Disk
     // Both save file sizes have a ton of optional blocks, so just accept a range (min/max) and rely on the hash validity.
