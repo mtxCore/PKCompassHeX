@@ -1,0 +1,45 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "Build PKHeX.WinForms Release",
+			"type": "shell",
+			"command": "dotnet build PKHeX.WinForms/PKHeX.WinForms.csproj -c Release",
+			"isBackground": false,
+			"problemMatcher": [
+				"$msCompile"
+			],
+			"group": "build"
+		},
+		{
+			"label": "Build PKHeX.Core Release",
+			"type": "shell",
+			"command": "dotnet build PKHeX.Core/PKHeX.Core.csproj -c Release",
+			"isBackground": false,
+			"problemMatcher": [
+				"$msCompile"
+			],
+			"group": "build"
+		},
+		{
+			"label": "Build PKHeX.WinForms Release",
+			"type": "shell",
+			"command": "dotnet build PKHeX.WinForms/PKHeX.WinForms.csproj -c Release",
+			"isBackground": false,
+			"problemMatcher": [
+				"$msCompile"
+			],
+			"group": "build"
+		},
+		{
+			"label": "Build PKHeX.Core Release",
+			"type": "shell",
+			"command": "dotnet build PKHeX.Core/PKHeX.Core.csproj -c Release",
+			"isBackground": false,
+			"problemMatcher": [
+				"$msCompile"
+			],
+			"group": "build"
+		}
+	]
+}

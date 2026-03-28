@@ -36,10 +36,8 @@ public static class SaveUtil
     private const int SIZE_G9_3A1 = 0x31CA6F; //          1.0.1 -> 1.1.0 -> 1.2.0 AM
     private const int SIZE_G9_3G1 = SIZE_G9_3A1 + 0x5; // GO
 
-    private const int SIZE_G9_3B0 = SIZE_G9_3A0 - 0xD; // BM
-    private const int SIZE_G9_3P0 = SIZE_G9_3B0 + 0x5; // GO (before Multiplayer)
-    private const int SIZE_G9_3A0 = 0x31CF7C; // 1.0.0 -> 1.0.1 -> 1.1.0 -> 1.2.0 AM
-    private const int SIZE_G9_3G0 = SIZE_G9_3A0 + 0x5; // GO
+	private const int SIZE_G9_3B0 = SIZE_G9_3A0 - 0xD; // BM
+	private const int SIZE_G9_3P0 = SIZE_G9_3B0 + 0x5; // GO (before Multiplayer)
 
     // 2.0.1 (2.0.0 skipped): Teal Mask
         private const int SIZE_G9_3A0 = 0x31CF7C; // 1.0.0 -> 1.0.1 -> 1.1.0 -> 1.2.0 AM
@@ -127,10 +125,8 @@ public static class SaveUtil
 
     private static bool IsSizeGen9ZA(int length) => length is SIZE_G9ZA_100 or SIZE_G9ZA_102 or SIZE_G9ZA_200 or SIZE_G9ZA_201;
 
-    private static bool IsSizeGen9SV(int length) => length is
-            SIZE_G9_0 or SIZE_G9_0a or SIZE_G9_1 or SIZE_G9_1a or SIZE_G9_1A or SIZE_G9_1Aa or SIZE_G9_1Ba or SIZE_G9_1Ab or SIZE_G9_2 or SIZE_G9_3 or SIZE_G9_3A0 or SIZE_G9_3A1 or SIZE_G9_3B0 or SIZE_G9_3B1 or SIZE_G9_3G0 or SIZE_G9_3G1 or SIZE_G9_3P0 or SIZE_G9_3P1 or (>= SIZE_G9_DLC1_MIN1 and <= SIZE_G9_DLC1_MAX1 + 100) or (>= SIZE_G9_DLC1_MIN2 and <= SIZE_G9_DLC1_MAX2 + 100) or (>= SIZE_G9_DLC1_MIN1 + SIZE_G9_202 and <= SIZE_G9_DLC1_MAX1 + SIZE_G9_202 + 100) or (>= SIZE_G9_DLC1_MIN2 + SIZE_G9_202 and <= SIZE_G9_DLC1_MAX2 + SIZE_G9_202 + 100) or (>= SIZE_G9_DLC1_MIN1 + SIZE_G9_300 and <= SIZE_G9_DLC1_MAX1 + SIZE_G9_300 + 100) or (>= SIZE_G9_DLC1_MIN2 + SIZE_G9_300 and <= SIZE_G9_DLC1_MAX2 + SIZE_G9_300 + 100);
-        // Disabled: Always return true to bypass size verification for S/V saves
-        private static bool IsSizeGen9SV(int length) => true;
+    // Disabled: Always return true to bypass size verification for S/V saves
+    private static bool IsSizeGen9SV(int length) => true;
 
     private static bool IsSizeGen8SWSH(int length) => length is SIZE_G8SWSH
         or SIZE_G8SWSH_1
