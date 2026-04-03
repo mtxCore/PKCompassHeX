@@ -50,7 +50,7 @@ It is based on [PKHeX](https://github.com/kwsch/PKHeX) and programmed in [C#](ht
 
 > **Note:** PKCompassHeX expects decrypted save files. Use a save manager like [Checkpoint](https://github.com/FlagBrew/Checkpoint), save_manager, [JKSM](https://github.com/J-D-K/JKSM), or SaveDataFiler to extract/import saves.
 
-
+> **Note:** All the game settings for Compass have not been fully mapped yet. There are still missing values and information that is being worked on. It is probably best to just edit game settings within the game and not with this tool.
 
 ## Building
 
