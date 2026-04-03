@@ -295,7 +295,7 @@ The `displayTip_*` and `newTip_*` pairs track whether a Tips screen has been sho
 |-----|-------|-----------|
 | `0x84222645` | 2 | `""` (empty string) |
 
-`0x84222645` is the FNV-1a hash of an empty string - the PKHeX offset basis `0xCBF29CE484222645` truncated to `uint32`. This block is the **Compass save format version**; value `2` identifies a v2.x Compass save, I presume. Used by `CompassBlockKeys.IsCompassSave()` as the primary detection key.
+`0x84222645` is the FNV-1a hash of an empty string - the PKHeX offset basis `0xCBF29CE484222645` truncated to `uint32`. This block is the **Compass save format version** (This needs a bit more research); value `2` identifies a v2.x Compass save, I presume.
 
 ---
 
@@ -458,7 +458,7 @@ Compass does not alter core block sizes. PKHeX editors for Box, Party, Items, Po
 ### Int32 Blocks (1)
 
 ```
-0x84222645  Int32   value=2   (hash("") - Compass save format version)
+0x84222645  Int32   value=2   (hash("") - No longer sure what this is. The original idea was the save format.
 ```
 
 ### Bool Blocks (12)
