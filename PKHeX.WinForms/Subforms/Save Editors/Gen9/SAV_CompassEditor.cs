@@ -254,13 +254,6 @@ public partial class SAV_CompassEditor : Form
         DGV_Raw.SuspendLayout();
         DGV_Raw.Rows.Clear();
 
-        if (Blocks.TryGetBlock(KSaveFormatVersion, out var versionBlock))
-        {
-            int ri = DGV_Raw.Rows.Add("0x84222645", "Int32", $"{(int)versionBlock.GetValue()}", "Save format version");
-            DGV_Raw.Rows[ri].Cells[2].ReadOnly = true;
-            DGV_Raw.Rows[ri].DefaultCellStyle.ForeColor = Color.Gray;
-        }
-
         if (Blocks.TryGetBlock(KTeamSeedTable, out var seedBlock))
         {
             string hex = Convert.ToHexString(seedBlock.Data);

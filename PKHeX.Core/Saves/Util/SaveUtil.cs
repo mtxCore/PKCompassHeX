@@ -122,10 +122,12 @@ public static class SaveUtil
 
     private static bool IsSizeGen9ZA(int length) => length is SIZE_G9ZA_100 or SIZE_G9ZA_102 or SIZE_G9ZA_200 or SIZE_G9ZA_201;
 
-    // PKCompassHeX: Pokémon Compass saves are larger.
-    // Compass v2.1.x saves are 0x43BAC0 bytes (+2,141 bytes vs largest known vanilla size).
-    // The SHA256 hash check in IsG9SV remains active, so only valid encrypted saves are accepted.
-    public const int SIZE_G9_COMPASS_210 = 0x43BAC0; // Pokémon Compass v2.1.x
+    // PKCompassHeX: Pokémon Compass saves are larger than vanilla S/V saves.
+    // Compass v2.1.x saves vary in size based on optional blocks present (player progression, etc.).
+    // Known observed sizes: 0x43B063 (re-exported via prelease build), 0x43BAC0 (fresh Compass save).
+    // The SHA256 hash check in IsG9SV is the true validator; the size range is a pre-filter only.
+    public const int SIZE_G9_COMPASS_MIN = 0x43B000; // Compass v2.1.x lower bound (with margin)
+    public const int SIZE_G9_COMPASS_MAX = 0x43C000;  // Compass v2.1.x upper bound (with margin)
     private static bool IsSizeGen9SV(int length) => length is
         SIZE_G9_0 or SIZE_G9_0a or SIZE_G9_1 or SIZE_G9_1a or SIZE_G9_1A or SIZE_G9_1Aa or SIZE_G9_1Ba or SIZE_G9_1Ab or SIZE_G9_2 or SIZE_G9_3
         or SIZE_G9_3A0 or SIZE_G9_3A1 or SIZE_G9_3B0 or SIZE_G9_3B1 or SIZE_G9_3G0 or SIZE_G9_3G1 or SIZE_G9_3P0 or SIZE_G9_3P1
@@ -135,7 +137,7 @@ public static class SaveUtil
         or (>= SIZE_G9_DLC1_MIN2 + SIZE_G9_202 and <= SIZE_G9_DLC1_MAX2 + SIZE_G9_202 + 100)
         or (>= SIZE_G9_DLC1_MIN1 + SIZE_G9_300 and <= SIZE_G9_DLC1_MAX1 + SIZE_G9_300 + 100)
         or (>= SIZE_G9_DLC1_MIN2 + SIZE_G9_300 and <= SIZE_G9_DLC1_MAX2 + SIZE_G9_300 + 100)
-        or SIZE_G9_COMPASS_210; // Pokémon Compass v2.1.x
+        or (>= SIZE_G9_COMPASS_MIN and <= SIZE_G9_COMPASS_MAX); // Pokémon Compass v2.1.x
 
     private static bool IsSizeGen8SWSH(int length) => length is SIZE_G8SWSH
         or SIZE_G8SWSH_1

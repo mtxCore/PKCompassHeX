@@ -68,7 +68,7 @@ PKHeX uses a **custom FNV-1a-64** hash for SCBlock key generation, truncated to 
 
 > **CRITICAL**: The offset basis differs from the standard FNV-1a-64 value (`0xCBF29CE484222325`). The difference is in the last two bytes: `2645` vs `2325`. PKHeX's implementation is in `PKHeX.Core/Saves/Encryption/SwishCrypto/FnvHash.cs`.
 
-Verification: `hash("") = 0x84222645`, which equals `KSaveFormatVersion`. This is the hash of an empty string, confirming the offset value.
+Verification: `hash("") = 0x84222645`. This is the FNV-1a offset basis (hash of an empty string).
 
 ### Capture Bonus Keys: `Compass_RNGSkew_{NationalDexNumber}`
 
@@ -427,9 +427,8 @@ Compass does not alter core block sizes. PKHeX editors for Box, Party, Items, Po
 | Capture Bonuses | Use `CompassBlockKeys.GetSpeciesForKey()` to display per-species progress (0–25) |
 | Settings display | All Compass SByte setting blocks now have confirmed value mappings. Use `CompassBlockKeys.Get*Label()` helpers or the SAV_CompassEditor UI |
 | `KTeamSeedTable` (`0xA9296A9C`) | **Caution when modifying** - used for random trainer team selection. Haven't tested the effects of modification. |
-| `KSaveFormatVersion` (`0x84222645`) | **Do not modify** - used for save type detection |
 | ajito_aku_050 blocks | **Caution when modifying** - Probably Team Star rematch states |
-| Save size | Must accept `0x43BAC0` as a known valid Compass save size |
+| Save size | Accepted as a range `[0x43B000, 0x43C000]` to handle re-exported saves (e.g. `0x43B063` from old builds). SHA256 hash remains the true validity gate |
 | `0x8B0D3ACE`, `0x40EECC82` | Do not modify directly - co-change with Level Cap and possibly Shiny Notification; let the game manage these |
 | Controls while Flying | Implemented at ConfigCamera9 bit 4 (inferred, not confirmed). Verify with save comparison before relying on it. |
 

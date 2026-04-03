@@ -25,7 +25,6 @@ public static class CompassBlockKeys
 
   /// <summary>Int32 = 2. Compass save-format version. Primary detection key.
   /// Hash input: <c>""</c> (empty string).</summary>
-  public const uint KSaveFormatVersion = 0x84222645;
 
   /// <summary>Object 257 bytes. Deterministic team seed table.
   /// Hash input: <c>Compass_TrainerSeed</c>.</summary>
@@ -1333,11 +1332,11 @@ public static class CompassBlockKeys
 
   /// <summary>
   /// Returns <see langword="true"/> if <paramref name="sav"/> is a Pokémon Compass save.
-  /// Detection priority: unique save-format-version block first, then save size.
+  /// Detected by the presence of <c>Compass_RNGSkew</c> (<see cref="KRNGSkew"/>),
+  /// a Compass-exclusive block that controls capture bonuses. All v2.1.x+ saves have it.
   /// </summary>
   public static bool IsCompassSave(SAV9SV sav) =>
-      sav.Blocks.HasBlock(KSaveFormatVersion) ||
-      sav.Data.Length == SaveUtil.SIZE_G9_COMPASS_210;
+      sav.Blocks.HasBlock(KRNGSkew);
 
 
   /// <summary>
