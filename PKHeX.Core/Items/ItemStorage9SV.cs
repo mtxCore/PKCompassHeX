@@ -232,7 +232,7 @@ public sealed class ItemStorage9SV : IItemStorage
         _ => throw new ArgumentOutOfRangeException(nameof(type)),
     };
 
-    public static ushort[] GetAllHeld() => [..Other, ..Machine, ..Medicine, ..Berry, ..Balls, ..Battle, ..Treasure];
+    public static ushort[] GetAllHeld() => [.. Other, .. Machine, .. Medicine, .. Berry, .. Balls, .. Battle, .. Treasure];
 
     public static InventoryType GetInventoryPouch(ushort itemIndex)
     {

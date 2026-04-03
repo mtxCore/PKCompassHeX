@@ -1,4 +1,5 @@
 using System;
+using System.Globalization;
 using System.IO;
 using System.Threading;
 using System.Windows.Forms;
@@ -28,6 +29,11 @@ internal static class Program
     public static bool HaX { get; private set; }
     static Program()
     {
+        // Wine can expose non-standard locale identifiers that MaskedTextBox passes to
+        // CultureInfo.GetCultureInfo, crashing before any form is shown.  Force InvariantCulture.
+        CultureInfo.DefaultThreadCurrentCulture = CultureInfo.InvariantCulture;
+        CultureInfo.DefaultThreadCurrentUICulture = CultureInfo.InvariantCulture;
+
 #if !DEBUG
         Application.ThreadException += UIThreadException;
         Application.SetUnhandledExceptionMode(UnhandledExceptionMode.CatchException);
@@ -44,6 +50,9 @@ internal static class Program
     [STAThread]
     private static void Main()
     {
+        Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
+        Thread.CurrentThread.CurrentUICulture = CultureInfo.InvariantCulture;
+
         // Load settings first
         var settings = Settings;
         settings.LocalResources.SetLocalPath(WorkingDirectory);
@@ -74,9 +83,15 @@ internal static class Program
         main.Shown += async (_, _) =>
         {
             splash?.BeginInvoke(splash.ForceClose);
-            main.Activate();
+            WinFormsUtil.AlertNotice(
+                @"NOTICE: PKCompassHeX
 
-            // Follow-up: display popups if needed.
+This application is NOT affiliated with PKHeX or the Pokémon Compass developers.
+
+DO NOT report bugs or suggestions to the original developers of these projects.
+Always refer to the official repository for support or suggestions:",
+                "https://github.com/mtxCore/PKCompassHeX"
+            );
             if (init.HaX)
                 main.WarnBehavior();
             else if (init.ShowChangelog)
@@ -140,7 +155,7 @@ internal static class Program
         {
             // If we fail to analyze the stack trace, just return the generic message. Don't risk another exception.
         }
-        return "An error occurred in PKHeX. Please report this error to the PKHeX author.";
+        return "An error occurred. Please report this error to the PKCompassHex github.";
     }
 
     private static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
@@ -150,20 +165,20 @@ internal static class Program
         {
             if (IsOldPkhexCorePresent(ex))
             {
-                Error("You have upgraded PKHeX incorrectly. Please delete PKHeX.Core.dll.");
+                Error("You have upgraded PKCompassHex incorrectly. Please delete PKHeX.Core.dll.");
             }
             else if (IsPkhexCoreMissing(ex))
             {
-                Error("You have installed PKHeX incorrectly. Please ensure you have unzipped all files before running.");
+                Error("You have installed PKCompassHex incorrectly. Please ensure you have unzipped all files before running.");
             }
             else if (ex is not null)
             {
                 var msg = GetErrorMessage(ex);
-                ErrorWindow.ShowErrorDialog($"{msg}\nPKHeX must now close.", ex, false);
+                ErrorWindow.ShowErrorDialog($"{msg}\nPKCompassHex must now close.", ex, false);
             }
             else
             {
-                Error("A fatal non-UI error has occurred in PKHeX, and the details could not be displayed.  Please report this to the author.");
+                Error("A fatal non-UI error has occurred in PKCompassHex, and the details could not be displayed.  Please report this to the github.");
             }
         }
         catch (Exception reportingException)
@@ -200,12 +215,12 @@ internal static class Program
         }
         if (reportingException is FileNotFoundException x && x.FileName?.StartsWith("PKHeX.Core") == true)
         {
-            Error("Could not locate PKHeX.Core.dll. Make sure you're running PKHeX together with its code library. Usually caused when all files are not extracted.");
+            Error("Could not locate PKHeX.Core.dll. Make sure you're running PKCompassHex together with its code library. Usually caused when all files are not extracted.");
             return;
         }
         try
         {
-            Error("A fatal non-UI error has occurred in PKHeX, and there was a problem displaying the details.  Please report this to the author.");
+            Error("A fatal non-UI error has occurred in PKCompassHex, and there was a problem displaying the details.  Please report this to the github.");
         }
         finally
         {
@@ -236,7 +251,7 @@ internal static class Program
 
     private static bool IsPkhexCoreMissing([NotNullWhen(true)] Exception? ex)
     {
-        return ex is FileNotFoundException { FileName: {} n } && n.Contains("PKHeX.Core");
+        return ex is FileNotFoundException { FileName: { } n } && n.Contains("PKHeX.Core");
     }
 #endif
 }

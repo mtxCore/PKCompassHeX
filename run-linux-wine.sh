@@ -1,30 +1,30 @@
 #!/usr/bin/env bash
-# run-linux-wine.sh - Build PKHeX on Linux and launch with Wine
+# run-linux-wine.sh - Build PKCompassHeX on Linux and launch with Wine
 # Usage:
-#   ./run-linux-wine.sh [clean]
+#   ./run-linux-wine.sh [clean | --skip-build]
 #   ./run-linux-wine.sh --help
 
 set -euo pipefail
 
 ARG1="${1-}"
 DOTNET_INSTALL_DIR="$HOME/.dotnet"
+PUBLISH_LOCK_LOG=""
 
-# --- Help Menu ---
 if [[ "$ARG1" == "--help" || "$ARG1" == "-h" ]]; then
   cat <<EOF
-Usage: $0 [clean]
+Usage: $0 [clean | --skip-build]
 
 This script:
-  - Detects/Installs .NET SDK and Wine via your system package manager
-  - Builds PKHeX.WinForms for Windows x64
-  - Launches the resulting EXE via Wine
+  - Detects or installs .NET SDK and Wine
+  - Builds PKHeX.WinForms for Windows x64 (unless skipped)
+  - Launches PKCompassHeX.exe via Wine
 
 Arguments:
-  clean  - Performs a 'dotnet clean' before building
+  clean         - Performs a 'dotnet clean' before building
+  --skip-build  - Skips the build process and attempts to launch the existing EXE
 EOF
   exit 0
 fi
-
 
 install_dotnet_fallback() {
   echo "Attempting dotnet-install script fallback..."
@@ -33,7 +33,6 @@ install_dotnet_fallback() {
   export DOTNET_ROOT="$DOTNET_INSTALL_DIR"
   export PATH="$DOTNET_INSTALL_DIR:$PATH"
 }
-
 
 if ! command -v dotnet >/dev/null 2>&1; then
   echo ".NET SDK not found. Attempting install..."
@@ -47,7 +46,6 @@ if ! command -v dotnet >/dev/null 2>&1; then
     install_dotnet_fallback
   fi
 fi
-
 
 if ! command -v wine >/dev/null 2>&1; then
   echo "Wine not found. Attempting install..."
@@ -63,22 +61,55 @@ if ! command -v wine >/dev/null 2>&1; then
 fi
 
 
-if [[ "$ARG1" == "clean" ]]; then
-  echo "Cleaning previous builds..."
-  dotnet clean PKHeX.sln
+publish_pkhex() {
+  dotnet publish PKHeX.WinForms -c Release -r win-x64 --self-contained false "$@"
+}
+
+if [[ "$ARG1" == "--skip-build" ]]; then
+  echo "Skipping build as requested..."
+else
+  if [[ "$ARG1" == "clean" ]]; then
+    echo "Cleaning previous builds..."
+    dotnet clean PKHeX.sln
+  fi
+  dotnet build-server shutdown >/dev/null 2>&1 || true
+  wineserver -k >/dev/null 2>&1 || true
+
+  echo "Building PKHeX for Windows..."
+  if ! publish_pkhex; then
+    PUBLISH_LOCK_LOG="$(mktemp)"
+    if publish_pkhex 2>&1 | tee "$PUBLISH_LOCK_LOG"; then
+      :
+    else
+      if grep -qE "NETSDK1096|CrossGen|being used by another process" "$PUBLISH_LOCK_LOG"; then
+        echo "Detected publish lock during ReadyToRun optimization; retrying with PublishReadyToRun=false..."
+        dotnet build-server shutdown >/dev/null 2>&1 || true
+        wineserver -k >/dev/null 2>&1 || true
+        publish_pkhex -p:PublishReadyToRun=false
+      else
+        cat "$PUBLISH_LOCK_LOG"
+        exit 1
+      fi
+    fi
+  fi
 fi
 
-echo "Building PKHeX for Windows..."
-# Using 'publish' ensures all dependencies are in one folder
-dotnet publish PKHeX.WinForms -c Release -r win-x64 --self-contained false
+EXE_PATH=$(find PKHeX.WinForms/bin -path "*/win-x64/publish/*" -iname "PKCompassHeX.exe" | head -n 1)
 
-EXE_PATH=$(find PKHeX.WinForms/bin -name "PKHeX.exe" | grep "win-x64" | head -n 1)
-
-if [[ -f "$EXE_PATH" ]]; then
+if [[ -n "$EXE_PATH" && -f "$EXE_PATH" ]]; then
   echo "Found binary: $EXE_PATH"
   echo "Launching via Wine..."
   wine "$EXE_PATH"
 else
-  echo "ERROR: PKHeX.exe not found. Build may have failed."
+  echo "ERROR: PKCompassHeX.exe not found."
+  if [[ "$ARG1" == "--skip-build" ]]; then
+    echo "You used --skip-build, but no binary exists. Run without the flag first."
+  else
+    echo "Check if the build failed or the publish directory path is correct."
+  fi
   exit 1
+fi
+
+if [[ -n "$PUBLISH_LOCK_LOG" && -f "$PUBLISH_LOCK_LOG" ]]; then
+  rm -f "$PUBLISH_LOCK_LOG"
 fi

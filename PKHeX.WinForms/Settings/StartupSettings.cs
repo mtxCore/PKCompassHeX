@@ -82,7 +82,7 @@ public sealed class StartupSettings : IStartupSettings
                 return;
             field = value;
         }
-    } = Latest.Version;
+    } = GameVersion.Compass;
 
     public void LoadSaveFile(string path)
     {

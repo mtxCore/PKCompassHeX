@@ -67,15 +67,29 @@ public sealed class StartupArguments
 
     private static SaveFile? ReadSettingsDefinedPKM(IStartupSettings startup, PKM pk) => startup.AutoLoadSaveOnStartup switch
     {
-        SaveFileLoadSetting.RecentBackup => SaveFinder.DetectSaveFiles(new CancellationTokenSource(TimeSpan.FromSeconds(5)).Token).FirstOrDefault(z => z.IsCompatiblePKM(pk)),
-        SaveFileLoadSetting.LastLoaded => GetMostRecentlyLoaded(startup.RecentlyLoaded).FirstOrDefault(z => z.IsCompatiblePKM(pk)),
+        SaveFileLoadSetting.RecentBackup =>
+            SaveFinder.DetectSaveFiles(new CancellationTokenSource(TimeSpan.FromSeconds(5)).Token)
+                .Where(z => z.IsCompatiblePKM(pk))
+                .OrderByDescending(z => z.Version == GameVersion.Compass)
+                .FirstOrDefault(),
+        SaveFileLoadSetting.LastLoaded =>
+            GetMostRecentlyLoaded(startup.RecentlyLoaded)
+                .Where(z => z.IsCompatiblePKM(pk))
+                .OrderByDescending(z => z.Version == GameVersion.Compass)
+                .FirstOrDefault(),
         _ => null,
     };
 
     private static SaveFile? ReadSettingsAnyPKM(IStartupSettings startup) => startup.AutoLoadSaveOnStartup switch
     {
-        SaveFileLoadSetting.RecentBackup => SaveFinder.DetectSaveFiles(new CancellationTokenSource(TimeSpan.FromSeconds(5)).Token).FirstOrDefault(),
-        SaveFileLoadSetting.LastLoaded => GetMostRecentlyLoaded(startup.RecentlyLoaded).FirstOrDefault(),
+        SaveFileLoadSetting.RecentBackup =>
+            SaveFinder.DetectSaveFiles(new CancellationTokenSource(TimeSpan.FromSeconds(5)).Token)
+                .OrderByDescending(z => z.Version == GameVersion.Compass)
+                .FirstOrDefault(),
+        SaveFileLoadSetting.LastLoaded =>
+            GetMostRecentlyLoaded(startup.RecentlyLoaded)
+                .OrderByDescending(z => z.Version == GameVersion.Compass)
+                .FirstOrDefault(),
         _ => null,
     };
 

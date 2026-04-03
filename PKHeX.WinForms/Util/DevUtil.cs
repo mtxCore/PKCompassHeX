@@ -316,7 +316,7 @@ public static class DevUtil
     private static string GetResourcePath(params ReadOnlySpan<string> subdir)
     {
         // Starting from the executable path, crawl upwards until we get to the repository/sln root
-        const string repo = "PKHeX";
+        const string repo = "PKCompassHeX";
         var path = Application.StartupPath;
         while (true)
         {

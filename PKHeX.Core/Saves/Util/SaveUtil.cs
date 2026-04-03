@@ -19,16 +19,16 @@ public static class SaveUtil
     private const int SIZE_G9ZA_200 = 0x309FA6; // Mega Dimension DLC
     private const int SIZE_G9ZA_201 = 0x309FB3; // +D for revision
 
-    private const int SIZE_G9_0   = 0x31626F; // 1.0.0 fresh
-    private const int SIZE_G9_0a  = 0x31627C; // 1.0.0 after multiplayer
-    private const int SIZE_G9_1   = 0x319DB3; // 1.0.1 fresh
-    private const int SIZE_G9_1a  = 0x319DC0; // 1.0.1 after multiplayer
-    private const int SIZE_G9_3   = 0x319DC3; // 1.1.0 fresh
+    private const int SIZE_G9_0 = 0x31626F; // 1.0.0 fresh
+    private const int SIZE_G9_0a = 0x31627C; // 1.0.0 after multiplayer
+    private const int SIZE_G9_1 = 0x319DB3; // 1.0.1 fresh
+    private const int SIZE_G9_1a = 0x319DC0; // 1.0.1 after multiplayer
+    private const int SIZE_G9_3 = 0x319DC3; // 1.1.0 fresh
     private const int SIZE_G9_1Ba = 0x319DD0; // 1.0.1 -> 1.1.0
-    private const int SIZE_G9_1A  = 0x31A2C0; // 1.0.0 -> 1.0.1
+    private const int SIZE_G9_1A = 0x31A2C0; // 1.0.0 -> 1.0.1
     private const int SIZE_G9_1Aa = 0x31A2CD; // 1.0.0 -> 1.0.1 -> 1.0.1 after multiplayer
     private const int SIZE_G9_1Ab = 0x31A2DD; // 1.0.0 -> 1.0.1 -> 1.0.1 after multiplayer -> 1.1.0
-    private const int SIZE_G9_2   = 0x31A2D0; // 1.0.0 -> 1.1.0
+    private const int SIZE_G9_2 = 0x31A2D0; // 1.0.0 -> 1.1.0
 
     // 1.2.0: add 0x2C9F; clean upgrade (1.1.0->1.2.0 is same as *1.2.0)
     private const int SIZE_G9_3B1 = SIZE_G9_3A1 - 0xD; // BM
@@ -57,11 +57,11 @@ public static class SaveUtil
     public const int SIZE_G8BDSP_2 = 0xEED8C;
     public const int SIZE_G8BDSP_3 = 0xEF0A4;
 
-    private const int SIZE_G8SWSH    = 0x1716B3; // 1.0
-    private const int SIZE_G8SWSH_1  = 0x17195E; // 1.0 -> 1.1
-    private const int SIZE_G8SWSH_2  = 0x180B19; // 1.0 -> 1.1 -> 1.2
+    private const int SIZE_G8SWSH = 0x1716B3; // 1.0
+    private const int SIZE_G8SWSH_1 = 0x17195E; // 1.0 -> 1.1
+    private const int SIZE_G8SWSH_2 = 0x180B19; // 1.0 -> 1.1 -> 1.2
     private const int SIZE_G8SWSH_2B = 0x180AD0; // 1.0 -> 1.2
-    private const int SIZE_G8SWSH_3  = 0x1876B1; // 1.0 -> 1.1 -> 1.2 -> 1.3
+    private const int SIZE_G8SWSH_3 = 0x1876B1; // 1.0 -> 1.1 -> 1.2 -> 1.3
     private const int SIZE_G8SWSH_3A = 0x187693; // 1.0 -> 1.1 -> 1.3
     private const int SIZE_G8SWSH_3B = 0x187668; // 1.0 -> 1.2 -> 1.3
     private const int SIZE_G8SWSH_3C = 0x18764A; // 1.0 -> 1.3
@@ -122,8 +122,20 @@ public static class SaveUtil
 
     private static bool IsSizeGen9ZA(int length) => length is SIZE_G9ZA_100 or SIZE_G9ZA_102 or SIZE_G9ZA_200 or SIZE_G9ZA_201;
 
-    // Disabled: Always return true to bypass size verification for S/V saves
-    private static bool IsSizeGen9SV(int length) => true;
+    // PKCompassHeX: Pokémon Compass saves are larger.
+    // Compass v2.1.x saves are 0x43BAC0 bytes (+2,141 bytes vs largest known vanilla size).
+    // The SHA256 hash check in IsG9SV remains active, so only valid encrypted saves are accepted.
+    public const int SIZE_G9_COMPASS_210 = 0x43BAC0; // Pokémon Compass v2.1.x
+    private static bool IsSizeGen9SV(int length) => length is
+        SIZE_G9_0 or SIZE_G9_0a or SIZE_G9_1 or SIZE_G9_1a or SIZE_G9_1A or SIZE_G9_1Aa or SIZE_G9_1Ba or SIZE_G9_1Ab or SIZE_G9_2 or SIZE_G9_3
+        or SIZE_G9_3A0 or SIZE_G9_3A1 or SIZE_G9_3B0 or SIZE_G9_3B1 or SIZE_G9_3G0 or SIZE_G9_3G1 or SIZE_G9_3P0 or SIZE_G9_3P1
+        or (>= SIZE_G9_DLC1_MIN1 and <= SIZE_G9_DLC1_MAX1 + 100)
+        or (>= SIZE_G9_DLC1_MIN2 and <= SIZE_G9_DLC1_MAX2 + 100)
+        or (>= SIZE_G9_DLC1_MIN1 + SIZE_G9_202 and <= SIZE_G9_DLC1_MAX1 + SIZE_G9_202 + 100)
+        or (>= SIZE_G9_DLC1_MIN2 + SIZE_G9_202 and <= SIZE_G9_DLC1_MAX2 + SIZE_G9_202 + 100)
+        or (>= SIZE_G9_DLC1_MIN1 + SIZE_G9_300 and <= SIZE_G9_DLC1_MAX1 + SIZE_G9_300 + 100)
+        or (>= SIZE_G9_DLC1_MIN2 + SIZE_G9_300 and <= SIZE_G9_DLC1_MAX2 + SIZE_G9_300 + 100)
+        or SIZE_G9_COMPASS_210; // Pokémon Compass v2.1.x
 
     private static bool IsSizeGen8SWSH(int length) => length is SIZE_G8SWSH
         or SIZE_G8SWSH_1
@@ -269,7 +281,7 @@ public static class SaveUtil
             return false;
 
         // check the save file(s)
-        int count = data.Length/SIZE_G3RAWHALF;
+        int count = data.Length / SIZE_G3RAWHALF;
         for (int slot = 0; slot < count; slot++)
         {
             if (SAV3.IsAllMainSectorsPresent(data, slot, out smallOffset))

@@ -143,6 +143,93 @@ public static class WinFormsUtil
         return MessageBox.Show(msg, "Alert", MessageBoxButtons.OK, sound ? MessageBoxIcon.Information : MessageBoxIcon.None);
     }
 
+    public static void AlertNotice(string message, string url)
+    {
+        System.Media.SystemSounds.Asterisk.Play();
+
+        Form noticeForm = new Form
+        {
+            Text = "Alert",
+            Size = new System.Drawing.Size(480, 300),
+            StartPosition = FormStartPosition.CenterParent,
+            FormBorderStyle = FormBorderStyle.FixedDialog,
+            MaximizeBox = false,
+            MinimizeBox = false,
+            ShowIcon = false
+        };
+
+        PictureBox iconBox = new PictureBox
+        {
+            Image = System.Drawing.SystemIcons.Information.ToBitmap(),
+            Location = new System.Drawing.Point(20, 20),
+            Size = new System.Drawing.Size(32, 32),
+            SizeMode = PictureBoxSizeMode.StretchImage
+        };
+
+        Label lbl = new Label
+        {
+            Text = message,
+            Location = new System.Drawing.Point(65, 20),
+            Width = 380,
+            AutoSize = true,
+            MaximumSize = new System.Drawing.Size(380, 0),
+            Font = System.Drawing.SystemFonts.MessageBoxFont
+        };
+
+        // Force the label to calculate its height 
+        noticeForm.Controls.Add(lbl);
+
+        LinkLabel link = new LinkLabel
+        {
+            Text = "Open GitHub Repository",
+            Location = new System.Drawing.Point(65, lbl.Bottom + 15),
+            Size = new System.Drawing.Size(200, 20),
+            Font = System.Drawing.SystemFonts.MessageBoxFont
+        };
+
+        link.LinkClicked += (s, e) =>
+        {
+            try
+            {
+                System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo
+                {
+                    FileName = url,
+                    UseShellExecute = true
+                });
+            }
+            catch
+            {
+                System.Windows.Forms.Clipboard.SetText(url);
+                MessageBox.Show("Could not open browser. Link copied to clipboard.", "Notice");
+            }
+        };
+
+        Button btn = new Button
+        {
+            Text = "OK",
+            DialogResult = DialogResult.OK,
+            Size = new System.Drawing.Size(85, 30),
+            Location = new System.Drawing.Point(360, 220) // Default start position
+        };
+
+        noticeForm.AcceptButton = btn;
+        btn.Click += (s, e) => noticeForm.Close();
+
+        noticeForm.Controls.Add(iconBox);
+        noticeForm.Controls.Add(link);
+        noticeForm.Controls.Add(btn);
+
+        int requiredHeight = link.Bottom + 80;
+        if (requiredHeight > noticeForm.Height)
+            noticeForm.Height = requiredHeight;
+
+        btn.Location = new System.Drawing.Point(noticeForm.ClientSize.Width - 105, noticeForm.ClientSize.Height - 45);
+
+        link.BringToFront(); // Ensure the link stays on top layer
+
+        noticeForm.ShowDialog();
+    }
+
     internal static DialogResult Prompt(MessageBoxButtons btn, params ReadOnlySpan<string?> lines)
     {
         System.Media.SystemSounds.Asterisk.Play();
@@ -533,13 +620,13 @@ public static class WinFormsUtil
             // https://learn.microsoft.com/en-us/openspecs/windows_protocols/ms-lcid/a9eac961-e77d-41a6-90a5-ce1a8b0cdb9c
             "es" => name switch
             {
-                "es" or "es-ES" or "es-ES_tradnl" or "es-GQ"   => "es",     // Spanish (Spain)
-                                                             _ => "es-419", // Spanish (Latin America)
+                "es" or "es-ES" or "es-ES_tradnl" or "es-GQ" => "es",     // Spanish (Spain)
+                _ => "es-419", // Spanish (Latin America)
             },
             "zh" => name switch
             {
-                "zh-Hant" or "zh-HK" or "zh-MO" or "zh-TW"   => "zh-Hant", // Traditional Chinese (Hong Kong/Macau/Taiwan)
-                                                           _ => "zh-Hans", // Simplified Chinese (China/Singapore)
+                "zh-Hant" or "zh-HK" or "zh-MO" or "zh-TW" => "zh-Hant", // Traditional Chinese (Hong Kong/Macau/Taiwan)
+                _ => "zh-Hans", // Simplified Chinese (China/Singapore)
             },
 
             // Use this language code if we support it, otherwise default to English
@@ -556,7 +643,9 @@ public static class WinFormsUtil
     /// </remarks>
     public static void SetCultureLanguage(string lang)
     {
-        var ci = new CultureInfo(lang);
+        // Use CreateSpecificCulture to prevent MaskedTextProvider from falling back to
+        // all system cultures which sometimes crashes on Wine.
+        var ci = CultureInfo.CreateSpecificCulture(lang);
         Thread.CurrentThread.CurrentCulture = Thread.CurrentThread.CurrentUICulture = ci;
     }
 

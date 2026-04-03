@@ -1,13 +1,13 @@
 <Project>
   <PropertyGroup>
-    <Version>26.03.20</Version>
+    <Version>26.03.20-C</Version>
     <LangVersion>14</LangVersion>
     <Nullable>enable</Nullable>
     <NeutralLanguage>en</NeutralLanguage>
-    <Product>PKHeX</Product>
-    <Company>Project Pokémon</Company>
-    <Authors>Kaphotics</Authors>
-    <Copyright>Kaphotics</Copyright>
+    <Product>PKCompassHeX</Product>
+    <Company>Project Pokémon (Original PKHeX) / PKCompassHeX</Company>
+    <Authors>Kaphotics, mtxCore</Authors>
+    <Copyright>Kaphotics, mtxCore</Copyright>
     <SourceRevisionId>$([System.DateTime]::UtcNow.ToString("yyMMddHHmmss"))</SourceRevisionId>
   </PropertyGroup>
 </Project>

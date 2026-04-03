@@ -769,6 +769,16 @@ public partial class Main : Form
         C_SAV.M.Reset();
 
         Text = GetProgramTitle(sav);
+        if (sav is SAV9SV sv9compass && PKHeX.Core.CompassBlockKeys.IsCompassSave(sv9compass))
+        {
+            Text += " [Pokémon Compass]";
+            Settings.Display.FlagIllegal = false; // Compass saves trigger false positives
+            C_SAV.FlagIllegal = false;
+            WinFormsUtil.Alert(
+                "Pokémon Compass save detected.",
+                "Legality flagging is automatically disabled.\nRe-enable via Options -> Settings -> Display -> Flag Illegal if needed."
+            );
+        }
         TryBackupExportCheck(sav, path);
         CheckLoadPath(path);
 
@@ -827,14 +837,18 @@ public partial class Main : Form
         string version = $"d-{date:yyyyMMdd}";
 #else
         var v = Program.CurrentVersion;
-        string version = $"{2000+v.Major:00}{v.Minor:00}{v.Build:00}";
+        string version = $"{2000 + v.Major:00}{v.Minor:00}{v.Build:00}";
 #endif
-        return $"PKH{(HaX ? "a" : "e")}X ({version})";
+        return $"PKCompassH{(HaX ? "a" : "e")}X ({version})";
     }
 
     private static string GetProgramTitle(SaveFile sav)
     {
-        string title = GetProgramTitle() + $" - {sav.GetType().Name}: ";
+        string saveTypeName = sav.GetType().Name;
+        if (sav is SAV9SV sv9 && PKHeX.Core.CompassBlockKeys.IsCompassSave(sv9))
+            saveTypeName = "SAV9COMPASS";
+
+        string title = GetProgramTitle() + $" - {saveTypeName}: ";
         if (sav is ISaveFileRevision rev)
             title = title.Insert(title.Length - 2, rev.SaveRevisionString);
         var version = GameInfo.GetVersionName(sav.Version);
@@ -1109,8 +1123,8 @@ public partial class Main : Form
         {
             Caption = MsgLegalityPopupCaption,
             Heading = la.Valid ? settings.Lines.Legal : settings.Lines.SInvalid,
-            Icon =    la.Valid ? TaskDialogIcon.ShieldSuccessGreenBar : TaskDialogIcon.ShieldErrorRedBar,
-            Text =    la.Valid ? "" : simpleReport,
+            Icon = la.Valid ? TaskDialogIcon.ShieldSuccessGreenBar : TaskDialogIcon.ShieldErrorRedBar,
+            Text = la.Valid ? "" : simpleReport,
             Expander = new TaskDialogExpander
             {
                 CollapsedButtonText = MsgLegalityPopupCollapsed,
@@ -1173,7 +1187,7 @@ public partial class Main : Form
 
     private void PKME_Tabs_LegalityChanged(object sender, EventArgs e)
     {
-        if (HaX)
+        if (HaX || !C_SAV.FlagIllegal)
         {
             PB_Legal.Visible = false;
             return;

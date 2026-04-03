@@ -28,6 +28,7 @@ public partial class SAV_Trainer9 : Form
         }
 
         B_MaxCash.Click += (_, _) => MT_Money.Text = SAV.MaxMoney.ToString();
+        B_CopyTrainerName.Click += CopyTrainerName;
         B_MaxLP.Click += (_, _) => MT_LP.Text = SAV.MaxMoney.ToString();
         B_MaxBP.Click += (_, _) => MT_BP.Text = SAV.MaxMoney.ToString();
 
@@ -182,6 +183,11 @@ public partial class SAV_Trainer9 : Form
         if (ModifierKeys != Keys.Control)
             return;
         TrashEditor.Show(TB_OTName, SAV, SAV.MyStatus.OriginalTrainerTrash);
+    }
+
+    private void CopyTrainerName(object? sender, EventArgs e)
+    {
+        Clipboard.SetText(TB_OTName.Text);
     }
 
     private void B_Cancel_Click(object sender, EventArgs e)

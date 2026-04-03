@@ -1,5 +1,25 @@
-PKHeX - By Kaphotics
-http://projectpokemon.org/pkhex/
+PKCompassHeX - By mtxCore
+https://github.com/mtxCore/PKCompassHeX
+Original Project: http://projectpokemon.org/pkhex/
+
+
+26/04/02 - New Update:
+ - Added: Shiny Pokémon artwork sprites for artwork-mode sprite display.
+ - Fixed: Secondary sprite fallback now stays within artwork sprites.
+ - Added: Pokémon Compass save detection - title bar now shows "[Pokémon Compass]" and legality flagging is automatically disabled on Compass load.
+ - Added: Save file type shown as "SAV9COMPASS" in the title bar when a Compass save is loaded.
+ - Added: Compass save editor panel (FLP_CompassTools) with three new buttons:
+   - "Capture Bonuses" — opens the new Capture Bonus viewer/editor (SAV_CaptureBonus).
+   - "Game Settings" — opens the new Compass Game Settings editor (SAV_CompassEditor), covering both vanilla S/V and Compass config blocks.
+   - "Story Flags" — opens the new Compass/Vanilla story flags editor (SAV_CompassStoryFlags) with tabs for Story, Travel, Unlocks, and Compass flags.
+ - Added: "Give Mythical Pecha Berry" button visible for all S/V saves. Adds Mythical Pecha Berry to Key Items, required for the Kitakami epilogue.
+ - Added: ConfigCamera9 now exposes ControlsWhileFlying (bit 4) camera inversion setting, used by the Game Settings editor.
+ - Added: GameVersion.Compass enum value (54) for Compass.
+ - Added: Auto-loader now prioritises Compass saves when detecting or loading the most recent save file.
+ - Added: "Copy Trainer Name" button in the Gen9 S/V Trainer Editor (SAV_Trainer9).
+ - Fixed: Wine/non-standard locale crash on startup fixed by overriding thread cultures to InvariantCulture before WinForms initialises.
+ - Changed: Update checks against the upstream PKHeX repository are disabled.
+ - Changed: Program title and error messages rebranded to PKCompassHeX throughout.
 
 26/03/20 - New Update:
  - Added handling for ZA's new patch revision tag.
@@ -256,3 +276,4 @@ http://projectpokemon.org/pkhex/
  - Changed: Gen3 RSBox now shows boxes similar to visual row order in-game rather than by order in the save file.
  - Changed: Sprite generating performance improved (less allocation).
  - Changed: Encounter template generating loops have been improved to better seek input criteria (IVs, nature, etc).
+

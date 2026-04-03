@@ -342,7 +342,7 @@ namespace PKHeX.WinForms
             TB_OT.Name = "TB_OT";
             TB_OT.Size = new System.Drawing.Size(109, 23);
             TB_OT.TabIndex = 3;
-            TB_OT.Text = "PKHeX";
+            TB_OT.Text = "Compass";
             TB_OT.TextChanged += Write_Entry;
             // 
             // TB_SID

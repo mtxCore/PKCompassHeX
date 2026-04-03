@@ -60,6 +60,7 @@ namespace PKHeX.WinForms.Controls
             L_ReadOnlyOther = new System.Windows.Forms.Label();
             Tab_SAV = new System.Windows.Forms.TabPage();
             FLP_SAVtools = new System.Windows.Forms.FlowLayoutPanel();
+            FLP_CompassTools = new System.Windows.Forms.FlowLayoutPanel();
             B_OpenTrainerInfo = new System.Windows.Forms.Button();
             B_OpenItemPouch = new System.Windows.Forms.Button();
             B_OpenBoxLayout = new System.Windows.Forms.Button();
@@ -102,6 +103,10 @@ namespace PKHeX.WinForms.Controls
             B_OpenBattlePass = new System.Windows.Forms.Button();
             B_OpenGear = new System.Windows.Forms.Button();
             B_OpenFashion = new System.Windows.Forms.Button();
+            B_CaptureBonus = new System.Windows.Forms.Button();
+            B_GameSettings = new System.Windows.Forms.Button();
+            B_StoryFlags = new System.Windows.Forms.Button();
+            B_GivePechaBerry = new System.Windows.Forms.Button();
             FLP_SAVToolsMisc = new System.Windows.Forms.FlowLayoutPanel();
             B_SaveBoxBin = new System.Windows.Forms.Button();
             B_VerifyCHK = new System.Windows.Forms.Button();
@@ -120,6 +125,7 @@ namespace PKHeX.WinForms.Controls
             ((System.ComponentModel.ISupportInitialize)dcpkx2).BeginInit();
             ((System.ComponentModel.ISupportInitialize)dcpkx1).BeginInit();
             Tab_SAV.SuspendLayout();
+            FLP_CompassTools.SuspendLayout();
             FLP_SAVtools.SuspendLayout();
             FLP_SAVToolsMisc.SuspendLayout();
             SuspendLayout();
@@ -213,7 +219,6 @@ namespace PKHeX.WinForms.Controls
             Box.ControlsVisible = true;
             Box.CurrentBox = -1;
             Box.Editor = null;
-            Box.FlagIllegal = false;
             Box.Location = new System.Drawing.Point(107, 19);
             Box.M = null;
             Box.Name = "Box";
@@ -235,7 +240,6 @@ namespace PKHeX.WinForms.Controls
             // SL_Party
             // 
             SL_Party.AutoSize = true;
-            SL_Party.FlagIllegal = false;
             SL_Party.Location = new System.Drawing.Point(8, 8);
             SL_Party.M = null;
             SL_Party.Name = "SL_Party";
@@ -257,7 +261,6 @@ namespace PKHeX.WinForms.Controls
             // SL_Extra
             // 
             SL_Extra.Dock = System.Windows.Forms.DockStyle.Right;
-            SL_Extra.FlagIllegal = false;
             SL_Extra.Location = new System.Drawing.Point(337, 0);
             SL_Extra.Name = "SL_Extra";
             SL_Extra.SAV = null;
@@ -401,6 +404,7 @@ namespace PKHeX.WinForms.Controls
             // Tab_SAV
             // 
             Tab_SAV.Controls.Add(FLP_SAVtools);
+            Tab_SAV.Controls.Add(FLP_CompassTools);
             Tab_SAV.Controls.Add(FLP_SAVToolsMisc);
             Tab_SAV.Controls.Add(CB_SaveSlot);
             Tab_SAV.Controls.Add(L_SaveSlot);
@@ -462,6 +466,19 @@ namespace PKHeX.WinForms.Controls
             FLP_SAVtools.Name = "FLP_SAVtools";
             FLP_SAVtools.Size = new System.Drawing.Size(441, 160);
             FLP_SAVtools.TabIndex = 101;
+            // 
+            // FLP_CompassTools
+            // 
+            FLP_CompassTools.Controls.Add(B_CaptureBonus);
+            FLP_CompassTools.Controls.Add(B_GameSettings);
+            FLP_CompassTools.Controls.Add(B_StoryFlags);
+            FLP_CompassTools.Controls.Add(B_GivePechaBerry);
+            FLP_CompassTools.Location = new System.Drawing.Point(0, 92);
+            FLP_CompassTools.Margin = new System.Windows.Forms.Padding(0);
+            FLP_CompassTools.Name = "FLP_CompassTools";
+            FLP_CompassTools.Padding = new System.Windows.Forms.Padding(0, 4, 0, 4);
+            FLP_CompassTools.Size = new System.Drawing.Size(441, 48);
+            FLP_CompassTools.TabIndex = 105;
             // 
             // B_OpenTrainerInfo
             // 
@@ -641,6 +658,47 @@ namespace PKHeX.WinForms.Controls
             B_DLC.Text = "DLC I/O";
             B_DLC.UseVisualStyleBackColor = true;
             B_DLC.Click += B_DLC_Click;
+            // 
+            // B_CaptureBonus
+            B_CaptureBonus.Location = new System.Drawing.Point(4, 4);
+            B_CaptureBonus.Margin = new System.Windows.Forms.Padding(4);
+            B_CaptureBonus.Name = "B_CaptureBonus";
+            B_CaptureBonus.Size = new System.Drawing.Size(96, 40);
+            B_CaptureBonus.TabIndex = 12;
+            B_CaptureBonus.Text = "Capture\r\nBonuses";
+            B_CaptureBonus.UseVisualStyleBackColor = true;
+            B_CaptureBonus.Click += B_CaptureBonus_Click;
+            // B_GameSettings
+            B_GameSettings.Location = new System.Drawing.Point(108, 4);
+            B_GameSettings.Margin = new System.Windows.Forms.Padding(4);
+            B_GameSettings.Name = "B_GameSettings";
+            B_GameSettings.Size = new System.Drawing.Size(96, 40);
+            B_GameSettings.TabIndex = 14;
+            B_GameSettings.Text = "Game\r\nSettings";
+            B_GameSettings.UseVisualStyleBackColor = true;
+            B_GameSettings.Click += B_GameSettings_Click;
+            // 
+            // B_StoryFlags
+            // 
+            B_StoryFlags.Location = new System.Drawing.Point(212, 4);
+            B_StoryFlags.Margin = new System.Windows.Forms.Padding(4);
+            B_StoryFlags.Name = "B_StoryFlags";
+            B_StoryFlags.Size = new System.Drawing.Size(96, 40);
+            B_StoryFlags.TabIndex = 15;
+            B_StoryFlags.Text = "Flags";
+            B_StoryFlags.UseVisualStyleBackColor = true;
+            B_StoryFlags.Click += B_StoryFlags_Click;
+            // 
+            // B_GivePechaBerry
+            // 
+            B_GivePechaBerry.Location = new System.Drawing.Point(212, 4);
+            B_GivePechaBerry.Margin = new System.Windows.Forms.Padding(4);
+            B_GivePechaBerry.Name = "B_GivePechaBerry";
+            B_GivePechaBerry.Size = new System.Drawing.Size(96, 40);
+            B_GivePechaBerry.TabIndex = 13;
+            B_GivePechaBerry.Text = "Pecha\r\nBerry";
+            B_GivePechaBerry.UseVisualStyleBackColor = true;
+            B_GivePechaBerry.Click += B_GivePechaBerry_Click;
             // 
             // B_Donuts
             // 
@@ -1047,9 +1105,27 @@ namespace PKHeX.WinForms.Controls
             ((System.ComponentModel.ISupportInitialize)dcpkx1).EndInit();
             Tab_SAV.ResumeLayout(false);
             Tab_SAV.PerformLayout();
+            FLP_CompassTools.ResumeLayout(false);
             FLP_SAVtools.ResumeLayout(false);
             FLP_SAVToolsMisc.ResumeLayout(false);
             ResumeLayout(false);
+            //
+            // Flags
+            //
+            AutoScaleMode = System.Windows.Forms.AutoScaleMode.Inherit;
+            Controls.Add(tabBoxMulti);
+            Name = "Story Flags";
+            Size = new System.Drawing.Size(449, 363);
+            tabBoxMulti.ResumeLayout(false);
+            Tab_Box.ResumeLayout(false);
+            Tab_Box.PerformLayout();
+            PopoutMenu.ResumeLayout(false);
+            Tab_PartyBattle.ResumeLayout(false);
+            Tab_PartyBattle.PerformLayout();
+            Tab_Other.ResumeLayout(false);
+            GB_Daycare.ResumeLayout(false);
+            GB_Daycare.PerformLayout();
+
         }
 
         #endregion
@@ -1077,6 +1153,7 @@ namespace PKHeX.WinForms.Controls
         private System.Windows.Forms.Button B_JPEG;
         private System.Windows.Forms.Button B_SaveBoxBin;
         private System.Windows.Forms.Button B_VerifyCHK;
+        private System.Windows.Forms.FlowLayoutPanel FLP_CompassTools;
         private System.Windows.Forms.FlowLayoutPanel FLP_SAVtools;
         private System.Windows.Forms.Button B_OpenTrainerInfo;
         private System.Windows.Forms.Button B_OpenItemPouch;
@@ -1127,6 +1204,10 @@ namespace PKHeX.WinForms.Controls
         private System.Windows.Forms.Button B_OpenGear;
         private System.Windows.Forms.Button B_OpenFashion;
         private System.Windows.Forms.Button B_Donuts;
+        private System.Windows.Forms.Button B_CaptureBonus;
+        private System.Windows.Forms.Button B_GameSettings;
+        private System.Windows.Forms.Button B_StoryFlags;
+        private System.Windows.Forms.Button B_GivePechaBerry;
         private System.Windows.Forms.Button B_SearchBox;
         private System.Windows.Forms.Button B_PopoutBox;
         private System.Windows.Forms.ContextMenuStrip PopoutMenu;

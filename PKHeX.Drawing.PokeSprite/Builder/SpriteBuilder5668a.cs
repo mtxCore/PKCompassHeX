@@ -21,7 +21,9 @@ public sealed class SpriteBuilder5668a : SpriteBuilder
 
     protected override string GetSpriteStringSpeciesOnly(ushort species) => 'a' + $"_{species}";
     protected override string GetSpriteAll(ushort species, byte form, byte gender, uint formarg, bool shiny, EntityContext context) => 'a' + SpriteName.GetResourceStringSprite(species, form, gender, formarg, context, shiny);
-    protected override string GetSpriteAllSecondary(ushort species, byte form, byte gender, uint formarg, bool shiny, EntityContext context) => 'b' + SpriteName.GetResourceStringSprite(species, form, gender, formarg, context, shiny);
+    // Secondary fallback stays within artwork ('a') by retrying without shiny; this prevents
+    // pixel-art ('b') sprites from appearing when an artwork shiny variant is unavailable.
+    protected override string GetSpriteAllSecondary(ushort species, byte form, byte gender, uint formarg, bool shiny, EntityContext context) => 'a' + SpriteName.GetResourceStringSprite(species, form, gender, formarg, context, false);
     protected override string GetItemResourceName(int item) => 'a' + $"item_{item}";
     protected override Bitmap Unknown => Resources.b_unknown;
     protected override Bitmap GetEggSprite(ushort species) => species == (int)Species.Manaphy ? Resources.a_490_e : Resources.a_egg;

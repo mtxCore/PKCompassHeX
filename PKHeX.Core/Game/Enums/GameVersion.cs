@@ -243,6 +243,10 @@ public enum GameVersion : byte
     /// Pokémon Champions (NX)
     /// </summary>
     CP = 53,
+    /// <summary>
+    /// Pokémon Compass (NX)
+    /// </summary>
+    Compass = 54,
     #endregion
 
     // The following values are not actually stored values in pk data,

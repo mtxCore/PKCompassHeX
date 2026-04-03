@@ -12,9 +12,9 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <PackageId>PKHeX</PackageId>
-    <AssemblyName>PKHeX</AssemblyName>
-    <Description>Pokémon Save Editor</Description>
+    <PackageId>PKCompassHeX</PackageId>
+    <AssemblyName>PKCompassHeX</AssemblyName>
+    <Description>Pokémon Compass Save Editor (PKCompassHeX)</Description>
     <ApplicationIcon>Resources\icon.ico</ApplicationIcon>
     <StartupObject>PKHeX.WinForms.Program</StartupObject>
     <RootNamespace>PKHeX.WinForms</RootNamespace>

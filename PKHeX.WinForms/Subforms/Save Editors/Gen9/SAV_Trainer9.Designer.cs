@@ -1,3 +1,5 @@
+using System.Windows.Forms;
+
 namespace PKHeX.WinForms
 {
     partial class SAV_Trainer9
@@ -55,6 +57,7 @@ namespace PKHeX.WinForms
             CB_Language = new System.Windows.Forms.ComboBox();
             CB_Game = new System.Windows.Forms.ComboBox();
             CB_Gender = new System.Windows.Forms.ComboBox();
+            B_CopyTrainerName = new System.Windows.Forms.Button();
             TB_MBMS = new System.Windows.Forms.MaskedTextBox();
             TB_MBMN = new System.Windows.Forms.MaskedTextBox();
             TB_MBRS = new System.Windows.Forms.MaskedTextBox();
@@ -402,6 +405,18 @@ namespace PKHeX.WinForms
             CB_Gender.Name = "CB_Gender";
             CB_Gender.Size = new System.Drawing.Size(46, 25);
             CB_Gender.TabIndex = 22;
+            //
+            // B_CopyTrainerName
+            //
+            ToolTip copyTrainerNameTooltip = new();
+            copyTrainerNameTooltip.SetToolTip(B_CopyTrainerName, "Copy Trainer Name");
+            B_CopyTrainerName.Location = new System.Drawing.Point(349, 13);
+            B_CopyTrainerName.Margin = new System.Windows.Forms.Padding(0);
+            B_CopyTrainerName.Name = "B_CopyTrainerName";
+            B_CopyTrainerName.Size = new System.Drawing.Size(46, 25);
+            B_CopyTrainerName.TabIndex = 16;
+            B_CopyTrainerName.Text = "Copy";
+            B_CopyTrainerName.UseVisualStyleBackColor = true;
             // 
             // TB_MBMS
             // 
@@ -672,6 +687,7 @@ namespace PKHeX.WinForms
             Tab_Overview.Controls.Add(L_Minutes);
             Tab_Overview.Controls.Add(TB_OTName);
             Tab_Overview.Controls.Add(CB_Gender);
+            Tab_Overview.Controls.Add(B_CopyTrainerName);
             Tab_Overview.Controls.Add(CB_Game);
             Tab_Overview.Controls.Add(L_TrainerName);
             Tab_Overview.Controls.Add(MT_Money);
@@ -1224,6 +1240,7 @@ namespace PKHeX.WinForms
         private System.Windows.Forms.TextBox TB_Saying1;
         private System.Windows.Forms.ComboBox CB_Language;
         private System.Windows.Forms.Button B_MaxCash;
+        private System.Windows.Forms.Button B_CopyTrainerName;
         private System.Windows.Forms.Label L_SuperB;
         private System.Windows.Forms.Label L_NormalB;
         private System.Windows.Forms.Label L_MultiB;

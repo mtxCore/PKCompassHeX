@@ -649,6 +649,41 @@ public partial class SAVEditor : UserControl, ISlotViewer<PictureBox>, ISaveFile
     private void B_OpenChatterEditor_Click(object sender, EventArgs e) => OpenDialog(new SAV_Chatter(SAV));
     private void B_OpenGear_Click(object sender, EventArgs e) => OpenDialog(new SAV_Gear((SAV4BR)SAV));
     private void B_Donuts_Click(object sender, EventArgs e) => OpenDialog(new SAV_Donut9a((SAV9ZA)SAV));
+    private void B_CaptureBonus_Click(object sender, EventArgs e) => OpenDialog(new SAV_CaptureBonus((SAV9SV)SAV));
+    private void B_GameSettings_Click(object sender, EventArgs e) => OpenDialog(new SAV_CompassEditor((SAV9SV)SAV));
+    private void B_StoryFlags_Click(object sender, EventArgs e) => OpenDialog(new SAV_CompassStoryFlags((SAV9SV)SAV));
+
+    private void B_GivePechaBerry_Click(object sender, EventArgs e)
+    {
+        if (SAV is not SAV9SV sv)
+            return;
+
+        const ushort mythicalPechaBerry = 2550;
+        var bag = sv.Inventory;
+        var keyItems = bag.GetPouch(InventoryType.KeyItems);
+
+        if (keyItems.HasItem(mythicalPechaBerry))
+        {
+            WinFormsUtil.Alert("The Mythical Pecha Berry is already in the bag.");
+            return;
+        }
+
+        if (WinFormsUtil.Prompt(MessageBoxButtons.YesNo, "This will add the Mythical Pecha Berry to your items, necessary for the Kitakami Epilogue. Would you like to proceed?") != DialogResult.Yes)
+        {
+            return;
+        }
+
+        int result = keyItems.GiveItem(bag, mythicalPechaBerry, 1);
+        if (result < 0)
+        {
+            WinFormsUtil.Alert("An unknown error prevented the Mythical Pecha Berry from being added.");
+            return;
+        }
+
+        bag.CopyTo(sv);
+        WinFormsUtil.Alert("Mythical Pecha Berry added to Key Items!",
+            "The Mochi Mayhem epilogue in Kitakami is now accessible.");
+    }
 
     private void B_OpenSecretBase_Click(object sender, EventArgs e)
     {
@@ -1277,6 +1312,7 @@ public partial class SAVEditor : UserControl, ISlotViewer<PictureBox>, ISaveFile
         if (!sav.State.Exportable || sav is BulkStorage)
         {
             FLP_SAVtools.Visible = false;
+            FLP_CompassTools.Visible = false;
             B_JPEG.Visible = false;
             B_ConvertKorean.Visible = false;
             SL_Extra.HideAllSlots();
@@ -1326,6 +1362,13 @@ public partial class SAVEditor : UserControl, ISlotViewer<PictureBox>, ISaveFile
 
         B_OpenFashion.Visible = sav is SAV9SV or SAV9ZA;
         B_Donuts.Visible = sav is SAV9ZA { SaveRevision: >= 1 };
+        bool isSV = sav is SAV9SV;
+        bool isCompass = sav is SAV9SV sv9 && PKHeX.Core.CompassBlockKeys.IsCompassSave(sv9);
+        B_CaptureBonus.Visible = isCompass;
+        B_GameSettings.Visible = isCompass;
+        B_StoryFlags.Visible = isCompass;
+        B_GivePechaBerry.Visible = isSV;
+        FLP_CompassTools.Visible = isSV;
 
         var list = FLP_SAVtools.Controls.OfType<Control>().OrderBy(z => z.Text).ToArray();
         FLP_SAVtools.Controls.Clear();
