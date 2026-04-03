@@ -1332,11 +1332,92 @@ public static class CompassBlockKeys
 
   /// <summary>
   /// Returns <see langword="true"/> if <paramref name="sav"/> is a Pokémon Compass save.
-  /// Detected by the presence of <c>Compass_RNGSkew</c> (<see cref="KRNGSkew"/>),
-  /// a Compass-exclusive block that controls capture bonuses. All v2.1.x+ saves have it.
+  /// Detected by the presence of <c>Compass_TrainerSeed</c> (<see cref="KTeamSeedTable"/>),
+  /// the earliest Compass block present in all Compass save versions.
   /// </summary>
   public static bool IsCompassSave(SAV9SV sav) =>
+      sav.Blocks.HasBlock(KTeamSeedTable);
+
+  /// <summary>
+  /// Returns <see langword="true"/> if this Compass save has the v2.1.x+ blocks
+  /// (settings, capture bonuses, feature flags). Older Compass versions lack these.
+  /// </summary>
+  public static bool HasCompassSettingBlocks(SAV9SV sav) =>
       sav.Blocks.HasBlock(KRNGSkew);
+
+  /// <summary>
+  /// Ensures all expected Compass v2.1.x blocks exist in the save.
+  /// Missing SByte settings, capture bonus, UInt64, and Bool blocks are
+  /// created with default values and inserted in sorted key order.
+  /// Returns the number of blocks added.
+  /// </summary>
+  public static int EnsureCompassBlocks(SAV9SV sav)
+  {
+    var existing = (List<SCBlock>)sav.AllBlocks;
+    var existingKeys = new HashSet<uint>(existing.Count);
+    foreach (var b in existing)
+      existingKeys.Add(b.Key);
+
+    var added = new List<SCBlock>();
+
+    // SByte settings (default 0)
+    foreach (var key in CompassSettingKeys)
+    {
+      if (!existingKeys.Contains(key))
+        added.Add(new SCBlock(key, SCTypeCode.SByte, new byte[1]));
+    }
+
+    // Shiny notification (SByte, default 0 = Spoiler-Free)
+    if (!existingKeys.Contains(KShinyNotification))
+      added.Add(new SCBlock(KShinyNotification, SCTypeCode.SByte, new byte[1]));
+
+    // Pepper talk flag (SByte, default 0)
+    if (!existingKeys.Contains(KPepperTalkAlready))
+      added.Add(new SCBlock(KPepperTalkAlready, SCTypeCode.SByte, new byte[1]));
+
+    // Capture bonus keys (SByte, default 0 = no captures)
+    foreach (var key in CaptureBonusKeys)
+    {
+      if (!existingKeys.Contains(key))
+        added.Add(new SCBlock(key, SCTypeCode.SByte, new byte[1]));
+    }
+
+    // UInt64 option blocks (default 0)
+    foreach (var (key, _) in UInt64OptionLabels)
+    {
+      if (!existingKeys.Contains(key))
+        added.Add(new SCBlock(key, SCTypeCode.UInt64, new byte[8]));
+    }
+
+    // Bool feature flags (true blocks → Bool2, false blocks → Bool1)
+    (uint Key, SCTypeCode Type)[] boolDefaults =
+    [
+        (KFeature_4197A769, SCTypeCode.Bool2), // compass_displayTip_CaptureBonuses = true
+          (KFeature_72958FC5, SCTypeCode.Bool2), // Compass_PERRINPARADOX = true
+          (KFeature_74043B2C, SCTypeCode.Bool2), // nixskip_selfie = true
+          (KFeature_7FD7214C, SCTypeCode.Bool2), // compass_displayTip_Obedience = true
+          (KFeature_A371E2C1, SCTypeCode.Bool2), // compass_newTip_NewMaps = true
+          (KFeature_AAC9AAD1, SCTypeCode.Bool2), // compass_displayTip_NewMaps = true
+          (KFeature_B3745A5C, SCTypeCode.Bool2), // compass_newTip_Obedience = true
+          (KFeature_BE24A8C0, SCTypeCode.Bool2), // yinskip_swift = true
+          (KFeature_D93612B9, SCTypeCode.Bool2), // compass_newTip_CaptureBonuses = true
+          (KFeature_78A49D0A, SCTypeCode.Bool1), // compass_newTip_PhoePrices = false
+          (KFeature_8F8F4A1E, SCTypeCode.Bool1), // roo_flag = false
+          (KFeature_D555F09A, SCTypeCode.Bool1), // compass_displayTip_PhoePrices = false
+      ];
+    foreach (var (key, type) in boolDefaults)
+    {
+      if (!existingKeys.Contains(key))
+        added.Add(new SCBlock(key, type));
+    }
+
+    if (added.Count == 0)
+      return 0;
+
+    existing.AddRange(added);
+    existing.Sort((a, b) => a.Key.CompareTo(b.Key));
+    return added.Count;
+  }
 
 
   /// <summary>

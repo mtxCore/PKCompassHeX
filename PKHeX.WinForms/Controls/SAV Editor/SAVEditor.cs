@@ -1364,8 +1364,9 @@ public partial class SAVEditor : UserControl, ISlotViewer<PictureBox>, ISaveFile
         B_Donuts.Visible = sav is SAV9ZA { SaveRevision: >= 1 };
         bool isSV = sav is SAV9SV;
         bool isCompass = sav is SAV9SV sv9 && PKHeX.Core.CompassBlockKeys.IsCompassSave(sv9);
-        B_CaptureBonus.Visible = isCompass;
-        B_GameSettings.Visible = isCompass;
+        bool hasCompassSettings = isCompass && PKHeX.Core.CompassBlockKeys.HasCompassSettingBlocks((SAV9SV)sav);
+        B_CaptureBonus.Visible = hasCompassSettings;
+        B_GameSettings.Visible = hasCompassSettings;
         B_StoryFlags.Visible = isCompass;
         B_GivePechaBerry.Visible = isSV;
         FLP_CompassTools.Visible = isSV;

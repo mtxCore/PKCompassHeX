@@ -774,10 +774,35 @@ public partial class Main : Form
             Text += " [Pokémon Compass]";
             Settings.Display.FlagIllegal = false; // Compass saves trigger false positives
             C_SAV.FlagIllegal = false;
-            WinFormsUtil.Alert(
-                "Pokémon Compass save detected.",
-                "Legality flagging is automatically disabled.\nRe-enable via Options -> Settings -> Display -> Flag Illegal if needed."
-            );
+
+            if (!PKHeX.Core.CompassBlockKeys.HasCompassSettingBlocks(sv9compass))
+            {
+                var result = WinFormsUtil.Prompt(MessageBoxButtons.YesNo,
+                    "Pokémon Compass save detected (older version).",
+                    "This save is missing Compass v2.1.x blocks (settings, capture bonuses, feature flags).\n" +
+                    "These blocks are required for the Game Settings and Capture Bonus editors.\n\n" +
+                    "Add the missing blocks with default values?\n" +
+                    "(The save will not be modified on disk until you export it.)");
+                if (result == DialogResult.Yes)
+                {
+                    int count = PKHeX.Core.CompassBlockKeys.EnsureCompassBlocks(sv9compass);
+                    WinFormsUtil.Alert($"{count} missing Compass blocks added with default values.",
+                        "Legality flagging is automatically disabled.\nRe-enable via Options -> Settings -> Display -> Flag Illegal if needed.");
+                }
+                else
+                {
+                    WinFormsUtil.Alert(
+                        "Compass blocks were not added. Some editors may not work.",
+                        "Legality flagging is automatically disabled.\nRe-enable via Options -> Settings -> Display -> Flag Illegal if needed.");
+                }
+            }
+            else
+            {
+                WinFormsUtil.Alert(
+                    "Pokémon Compass save detected.",
+                    "Legality flagging is automatically disabled.\nRe-enable via Options -> Settings -> Display -> Flag Illegal if needed."
+                );
+            }
         }
         TryBackupExportCheck(sav, path);
         CheckLoadPath(path);
