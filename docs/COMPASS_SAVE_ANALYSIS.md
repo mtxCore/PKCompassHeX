@@ -8,7 +8,7 @@ Cross-referenced with the [v2.1.x Primer](https://compass.seri.studio/2100-prime
 
 This analysis is an independent project. It is not affiliated with, endorsed by, or supported by the Pokémon Compass developers or the Project Pokémon (PKHeX) developers.
 
-Please do not ask for support for this documentation, PKCompassHex or any other related tools within the official Inidar Academy Discord server or Project Pokémon forms. The Compass developers have stated they do not provide support for this tool or any other external documentation projects. Asking for support in these resources has a chance for permanent moderation. (I myself am banned from the Inidar Academy Discord server for asking for documentation, so make as you will with that)
+Please do not ask for support for this documentation, PKCompassHex or any other related tools within the official Inidar Academy Discord server or Project Pokémon forms. The Compass developers have stated they do not provide support for this tool or any other external documentation projects. 
 
 Any questions/support should be reported to the GitHub repo. I will NOT respond to any other platform or repository about this project. 
 
