@@ -3,6 +3,15 @@ https://github.com/mtxCore/PKCompassHeX
 Original Project: http://projectpokemon.org/pkhex/
 
 
+26/05/08 - New Update:
+ - Changed: Removed the Compass "Game Settings" / "Compass Toolkit" button from the Save editor Compass tools row.
+ - Changed: Compass menu now focuses on Capture Bonuses, Story Flags, and Pecha Berry helper actions.
+ - Added: Capture Bonuses editor now supports species name filtering.
+ - Added: Capture Bonuses editor now has selected-row quick actions (Set Selected to 25 / Set Selected to 0).
+ - Added: Story Flags editor now supports tab-wide quick actions (Check Tab / Uncheck Tab / Invert Tab).
+ - Added: Story Flags editor now has search + "Find Next" within the current tab.
+
+
 26/04/02 - New Update:
  - Added: Shiny Pokémon artwork sprites for artwork-mode sprite display.
  - Fixed: Secondary sprite fallback now stays within artwork sprites.
@@ -10,10 +19,10 @@ Original Project: http://projectpokemon.org/pkhex/
  - Added: Save file type shown as "SAV9COMPASS" in the title bar when a Compass save is loaded.
  - Added: Compass save editor panel (FLP_CompassTools) with three new buttons:
    - "Capture Bonuses" — opens the new Capture Bonus viewer/editor (SAV_CaptureBonus).
-   - "Game Settings" — opens the new Compass Game Settings editor (SAV_CompassEditor), covering both vanilla S/V and Compass config blocks.
+  - "Compass Toolkit" — opens the Compass toolkit editor (SAV_CompassEditor), focused on Compass-specific gameplay modifiers and quick presets.
    - "Story Flags" — opens the new Compass/Vanilla story flags editor (SAV_CompassStoryFlags) with tabs for Story, Travel, Unlocks, and Compass flags.
  - Added: "Give Mythical Pecha Berry" button visible for all S/V saves. Adds Mythical Pecha Berry to Key Items, required for the Kitakami epilogue.
- - Added: ConfigCamera9 now exposes ControlsWhileFlying (bit 4) camera inversion setting, used by the Game Settings editor.
+ - Added: ConfigCamera9 now exposes ControlsWhileFlying (bit 4) camera inversion setting.
  - Added: GameVersion.Compass enum value (54) for Compass.
  - Added: Auto-loader now prioritises Compass saves when detecting or loading the most recent save file.
  - Added: "Copy Trainer Name" button in the Gen9 S/V Trainer Editor (SAV_Trainer9).

@@ -17,6 +17,7 @@ public partial class SAV_CompassStoryFlags : Form
   private readonly Dictionary<CheckedListBox, List<FlagEntry>> _entriesByList = [];
 
   private bool _warnedEdit;
+  private int _lastFindIndex = -1;
 
   private readonly record struct FlagEntry(uint Key, bool IsPepperTalk);
 
@@ -226,6 +227,67 @@ public partial class SAV_CompassStoryFlags : Form
     CLB_Travel.EndUpdate();
     CLB_Unlocks.EndUpdate();
     CLB_Compass.EndUpdate();
+  }
+
+  private CheckedListBox GetActiveList() => TC_Flags.SelectedTab switch
+  {
+    var tab when tab == TAB_Travel => CLB_Travel,
+    var tab when tab == TAB_Unlocks => CLB_Unlocks,
+    var tab when tab == TAB_Compass => CLB_Compass,
+    _ => CLB_Story,
+  };
+
+  private void ApplyCurrentTabState(bool? state)
+  {
+    if (!ConfirmEdit())
+      return;
+
+    var list = GetActiveList();
+    list.BeginUpdate();
+    for (int i = 0; i < list.Items.Count; i++)
+    {
+      bool next = state.HasValue ? state.Value : !list.GetItemChecked(i);
+      list.SetItemChecked(i, next);
+    }
+    list.EndUpdate();
+  }
+
+  private void B_CheckAllTab_Click(object? sender, EventArgs e) => ApplyCurrentTabState(true);
+
+  private void B_UncheckAllTab_Click(object? sender, EventArgs e) => ApplyCurrentTabState(false);
+
+  private void B_InvertTab_Click(object? sender, EventArgs e) => ApplyCurrentTabState(null);
+
+  private void TB_Search_TextChanged(object? sender, EventArgs e) => _lastFindIndex = -1;
+
+  private void B_FindNext_Click(object? sender, EventArgs e)
+  {
+    var list = GetActiveList();
+    if (list.Items.Count == 0)
+      return;
+
+    string query = TB_Search.Text.Trim();
+    if (query.Length == 0)
+    {
+      WinFormsUtil.Alert("Enter search text to find an item in the current tab.");
+      return;
+    }
+
+    int start = (_lastFindIndex + 1) % list.Items.Count;
+    for (int step = 0; step < list.Items.Count; step++)
+    {
+      int idx = (start + step) % list.Items.Count;
+      string text = list.Items[idx]?.ToString() ?? string.Empty;
+      if (!text.Contains(query, StringComparison.OrdinalIgnoreCase))
+        continue;
+
+      _lastFindIndex = idx;
+      list.SelectedIndex = idx;
+      list.TopIndex = Math.Max(0, idx - 2);
+      return;
+    }
+
+    WinFormsUtil.Alert("No matching flags found in the current tab.");
   }
 
   private void BuildStoryFlags()

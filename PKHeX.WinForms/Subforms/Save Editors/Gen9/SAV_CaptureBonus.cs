@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 using System.Windows.Forms;
 using PKHeX.Core;
 using static PKHeX.Core.CompassBlockKeys;
@@ -200,6 +201,18 @@ public partial class SAV_CaptureBonus : Form
     SetAllCaptureBonus(25);
   }
 
+  private void B_SetSelectedMax_Click(object? sender, EventArgs e)
+  {
+    if (!ConfirmEdit()) return;
+    SetSelectedCaptureBonus(25);
+  }
+
+  private void B_SetSelectedZero_Click(object? sender, EventArgs e)
+  {
+    if (!ConfirmEdit()) return;
+    SetSelectedCaptureBonus(0);
+  }
+
   private void B_ResetAll_Click(object? sender, EventArgs e)
   {
     if (!ConfirmEdit()) return;
@@ -241,6 +254,54 @@ public partial class SAV_CaptureBonus : Form
   {
     int filled = max == 0 ? 0 : Math.Clamp(value * width / max, 0, width);
     return new string('\u2588', filled) + new string('\u2591', width - filled);
+  }
+
+  private void SetSelectedCaptureBonus(int value)
+  {
+    var selectedRows = DGV_CaptureBonus.SelectedRows.Cast<DataGridViewRow>().ToArray();
+    if (selectedRows.Length == 0)
+    {
+      if (DGV_CaptureBonus.CurrentCell is null)
+      {
+        WinFormsUtil.Alert("Select at least one row first.");
+        return;
+      }
+
+      selectedRows = [DGV_CaptureBonus.Rows[DGV_CaptureBonus.CurrentCell.RowIndex]];
+    }
+
+    _loading = true;
+    foreach (var row in selectedRows)
+    {
+      if (row.Tag is not uint key)
+        continue;
+      if (Blocks.TryGetBlock(key, out var block) && block.Type == SCTypeCode.SByte)
+        block.SetValue((sbyte)value);
+
+      row.Cells[1].Value = value;
+      row.Cells[2].Value = $"{BuildBar(value, 25, 20)} {value,2}/25";
+      row.Cells[3].Value = GetCaptureStatus(value);
+    }
+    _loading = false;
+    RecalcCBStats();
+  }
+
+  private void TB_Filter_TextChanged(object? sender, EventArgs e) => ApplyFilter();
+
+  private void B_ClearFilter_Click(object? sender, EventArgs e)
+  {
+    TB_Filter.Text = string.Empty;
+    TB_Filter.Focus();
+  }
+
+  private void ApplyFilter()
+  {
+    string query = TB_Filter.Text.Trim();
+    foreach (DataGridViewRow row in DGV_CaptureBonus.Rows)
+    {
+      string name = row.Cells[0].Value?.ToString() ?? string.Empty;
+      row.Visible = query.Length == 0 || name.Contains(query, StringComparison.OrdinalIgnoreCase);
+    }
   }
 
   private void B_Save_Click(object? sender, EventArgs e)

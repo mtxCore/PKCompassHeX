@@ -145,7 +145,7 @@ namespace PKHeX.WinForms
             MinimumSize = new System.Drawing.Size(650, 480);
             Name = "SAV_CompassEditor";
             StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-            Text = "Game Settings \u2014 Pok\u00e9mon Compass";
+            Text = "Compass Toolkit - Pokemon Compass";
             ((System.ComponentModel.ISupportInitialize)DGV_Raw).EndInit();
             GB_Raw.ResumeLayout(false);
             ResumeLayout(false);

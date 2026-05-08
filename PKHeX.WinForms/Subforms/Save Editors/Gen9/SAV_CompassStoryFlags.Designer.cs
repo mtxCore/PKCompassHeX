@@ -15,6 +15,12 @@ namespace PKHeX.WinForms
 
     private void InitializeComponent()
     {
+      L_Search = new System.Windows.Forms.Label();
+      TB_Search = new System.Windows.Forms.TextBox();
+      B_FindNext = new System.Windows.Forms.Button();
+      B_CheckAllTab = new System.Windows.Forms.Button();
+      B_UncheckAllTab = new System.Windows.Forms.Button();
+      B_InvertTab = new System.Windows.Forms.Button();
       TC_Flags = new System.Windows.Forms.TabControl();
       TAB_Story = new System.Windows.Forms.TabPage();
       CLB_Story = new System.Windows.Forms.CheckedListBox();
@@ -33,17 +39,69 @@ namespace PKHeX.WinForms
       B_Save = new System.Windows.Forms.Button();
       SuspendLayout();
 
+      // L_Search
+      L_Search.Location = new System.Drawing.Point(8, 9);
+      L_Search.Name = "L_Search";
+      L_Search.Size = new System.Drawing.Size(49, 23);
+      L_Search.TabIndex = 0;
+      L_Search.Text = "Search:";
+      L_Search.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+
+      // TB_Search
+      TB_Search.Location = new System.Drawing.Point(58, 9);
+      TB_Search.Name = "TB_Search";
+      TB_Search.PlaceholderText = "Find flag in current tab...";
+      TB_Search.Size = new System.Drawing.Size(190, 23);
+      TB_Search.TabIndex = 1;
+      TB_Search.TextChanged += TB_Search_TextChanged;
+
+      // B_FindNext
+      B_FindNext.Location = new System.Drawing.Point(254, 8);
+      B_FindNext.Name = "B_FindNext";
+      B_FindNext.Size = new System.Drawing.Size(86, 25);
+      B_FindNext.TabIndex = 2;
+      B_FindNext.Text = "Find Next";
+      B_FindNext.UseVisualStyleBackColor = true;
+      B_FindNext.Click += B_FindNext_Click;
+
+      // B_CheckAllTab
+      B_CheckAllTab.Location = new System.Drawing.Point(346, 8);
+      B_CheckAllTab.Name = "B_CheckAllTab";
+      B_CheckAllTab.Size = new System.Drawing.Size(94, 25);
+      B_CheckAllTab.TabIndex = 3;
+      B_CheckAllTab.Text = "Check Tab";
+      B_CheckAllTab.UseVisualStyleBackColor = true;
+      B_CheckAllTab.Click += B_CheckAllTab_Click;
+
+      // B_UncheckAllTab
+      B_UncheckAllTab.Location = new System.Drawing.Point(446, 8);
+      B_UncheckAllTab.Name = "B_UncheckAllTab";
+      B_UncheckAllTab.Size = new System.Drawing.Size(103, 25);
+      B_UncheckAllTab.TabIndex = 4;
+      B_UncheckAllTab.Text = "Uncheck Tab";
+      B_UncheckAllTab.UseVisualStyleBackColor = true;
+      B_UncheckAllTab.Click += B_UncheckAllTab_Click;
+
+      // B_InvertTab
+      B_InvertTab.Location = new System.Drawing.Point(555, 8);
+      B_InvertTab.Name = "B_InvertTab";
+      B_InvertTab.Size = new System.Drawing.Size(86, 25);
+      B_InvertTab.TabIndex = 5;
+      B_InvertTab.Text = "Invert Tab";
+      B_InvertTab.UseVisualStyleBackColor = true;
+      B_InvertTab.Click += B_InvertTab_Click;
+
       // TC_Flags
       TC_Flags.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
       TC_Flags.Controls.Add(TAB_Story);
       TC_Flags.Controls.Add(TAB_Travel);
       TC_Flags.Controls.Add(TAB_Unlocks);
       TC_Flags.Controls.Add(TAB_Compass);
-      TC_Flags.Location = new System.Drawing.Point(8, 8);
+      TC_Flags.Location = new System.Drawing.Point(8, 37);
       TC_Flags.Name = "TC_Flags";
       TC_Flags.SelectedIndex = 0;
-      TC_Flags.Size = new System.Drawing.Size(720, 496);
-      TC_Flags.TabIndex = 0;
+      TC_Flags.Size = new System.Drawing.Size(720, 467);
+      TC_Flags.TabIndex = 6;
 
       // TAB_Story
       TAB_Story.Controls.Add(CLB_Story);
@@ -130,7 +188,7 @@ namespace PKHeX.WinForms
       B_Cancel.Location = new System.Drawing.Point(646, 510);
       B_Cancel.Name = "B_Cancel";
       B_Cancel.Size = new System.Drawing.Size(82, 27);
-      B_Cancel.TabIndex = 1;
+      B_Cancel.TabIndex = 7;
       B_Cancel.Text = "Cancel";
       B_Cancel.UseVisualStyleBackColor = true;
       B_Cancel.Click += B_Cancel_Click;
@@ -140,7 +198,7 @@ namespace PKHeX.WinForms
       B_Save.Location = new System.Drawing.Point(558, 510);
       B_Save.Name = "B_Save";
       B_Save.Size = new System.Drawing.Size(82, 27);
-      B_Save.TabIndex = 2;
+      B_Save.TabIndex = 8;
       B_Save.Text = "Save";
       B_Save.UseVisualStyleBackColor = true;
       B_Save.Click += B_Save_Click;
@@ -149,6 +207,12 @@ namespace PKHeX.WinForms
       AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
       AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
       ClientSize = new System.Drawing.Size(736, 545);
+      Controls.Add(B_InvertTab);
+      Controls.Add(B_UncheckAllTab);
+      Controls.Add(B_CheckAllTab);
+      Controls.Add(B_FindNext);
+      Controls.Add(TB_Search);
+      Controls.Add(L_Search);
       Controls.Add(B_Save);
       Controls.Add(B_Cancel);
       Controls.Add(TC_Flags);
@@ -168,6 +232,12 @@ namespace PKHeX.WinForms
 
     #endregion
 
+    private System.Windows.Forms.Label L_Search;
+    private System.Windows.Forms.TextBox TB_Search;
+    private System.Windows.Forms.Button B_FindNext;
+    private System.Windows.Forms.Button B_CheckAllTab;
+    private System.Windows.Forms.Button B_UncheckAllTab;
+    private System.Windows.Forms.Button B_InvertTab;
     private System.Windows.Forms.TabControl TC_Flags;
     private System.Windows.Forms.TabPage TAB_Story;
     private System.Windows.Forms.CheckedListBox CLB_Story;

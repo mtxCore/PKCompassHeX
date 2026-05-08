@@ -650,7 +650,6 @@ public partial class SAVEditor : UserControl, ISlotViewer<PictureBox>, ISaveFile
     private void B_OpenGear_Click(object sender, EventArgs e) => OpenDialog(new SAV_Gear((SAV4BR)SAV));
     private void B_Donuts_Click(object sender, EventArgs e) => OpenDialog(new SAV_Donut9a((SAV9ZA)SAV));
     private void B_CaptureBonus_Click(object sender, EventArgs e) => OpenDialog(new SAV_CaptureBonus((SAV9SV)SAV));
-    private void B_GameSettings_Click(object sender, EventArgs e) => OpenDialog(new SAV_CompassEditor((SAV9SV)SAV));
     private void B_StoryFlags_Click(object sender, EventArgs e) => OpenDialog(new SAV_CompassStoryFlags((SAV9SV)SAV));
 
     private void B_GivePechaBerry_Click(object sender, EventArgs e)
@@ -1366,7 +1365,6 @@ public partial class SAVEditor : UserControl, ISlotViewer<PictureBox>, ISaveFile
         bool isCompass = sav is SAV9SV sv9 && PKHeX.Core.CompassBlockKeys.IsCompassSave(sv9);
         bool hasCompassSettings = isCompass && PKHeX.Core.CompassBlockKeys.HasCompassSettingBlocks((SAV9SV)sav);
         B_CaptureBonus.Visible = hasCompassSettings;
-        B_GameSettings.Visible = hasCompassSettings;
         B_StoryFlags.Visible = isCompass;
         B_GivePechaBerry.Visible = isSV;
         FLP_CompassTools.Visible = isSV;

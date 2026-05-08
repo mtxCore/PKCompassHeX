@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 using PKHeX.Core;
@@ -8,15 +7,13 @@ using static PKHeX.Core.CompassBlockKeys;
 namespace PKHeX.WinForms;
 
 /// <summary>
-/// Game Settings editor for Pokémon Compass saves.
+/// Compass toolkit editor for Pokemon Compass saves.
 /// </summary>
 public partial class SAV_CompassEditor : Form
 {
     private readonly SaveFile Origin;
     private readonly SAV9SV SAV;
     private readonly SCBlockAccessor Blocks;
-    private readonly ConfigSave9 Config;
-    private readonly ConfigCamera9 Camera;
 
     private bool _warnedEdit;
     private bool _loading;
@@ -27,12 +24,13 @@ public partial class SAV_CompassEditor : Form
         WinFormsUtil.TranslateInterface(this, Main.CurrentLanguage);
         SAV = (SAV9SV)(Origin = sav).Clone();
         Blocks = SAV.Blocks;
-        Config = SAV.Config;
-        Camera = SAV.Blocks.ConfigCamera;
 
         _loading = true;
-        BuildVanillaSettings();
+        BuildOverview();
+        BuildQuickActions();
         BuildCompassSettings();
+        HookSummaryRefresh();
+        RefreshSummary();
         LoadRawData();
         _loading = false;
     }
@@ -78,6 +76,57 @@ public partial class SAV_CompassEditor : Form
         TLP_Settings.Controls.Add(sep, 0, _row++);
     }
 
+    private Label AddInfoRow(string text)
+    {
+        var lbl = new Label
+        {
+            Text = text,
+            AutoSize = false,
+            Height = 52,
+            Dock = DockStyle.Fill,
+            TextAlign = ContentAlignment.TopLeft,
+            ForeColor = SystemColors.ControlDarkDark,
+            Padding = new Padding(0, 2, 0, 0),
+        };
+        TLP_Settings.SetColumnSpan(lbl, 2);
+        TLP_Settings.Controls.Add(lbl, 0, _row++);
+        return lbl;
+    }
+
+    private void AddControlRow(Control control)
+    {
+        TLP_Settings.SetColumnSpan(control, 2);
+        TLP_Settings.Controls.Add(control, 0, _row++);
+    }
+
+    private Button CreateActionButton(string text, EventHandler onClick)
+    {
+        var btn = new Button
+        {
+            Text = text,
+            Width = 150,
+            Height = 28,
+            Margin = new Padding(0, 0, 8, 0),
+            AutoSize = false,
+        };
+        btn.Click += onClick;
+        return btn;
+    }
+
+    private void AddActionButtonsRow(params Button[] buttons)
+    {
+        var flow = new FlowLayoutPanel
+        {
+            AutoSize = true,
+            AutoSizeMode = AutoSizeMode.GrowAndShrink,
+            Dock = DockStyle.Fill,
+            WrapContents = true,
+            Margin = new Padding(0, 2, 0, 2),
+        };
+        flow.Controls.AddRange(buttons);
+        AddControlRow(flow);
+    }
+
     private ComboBox AddComboRow(string label, string[] items, int selectedIndex)
     {
         var lbl = new Label { Text = label, AutoSize = false, Height = 24, Dock = DockStyle.Fill, TextAlign = ContentAlignment.MiddleLeft };
@@ -91,66 +140,10 @@ public partial class SAV_CompassEditor : Form
         return cb;
     }
 
-    private CheckBox AddCheckRow(string label, bool isChecked)
+    private void BuildOverview()
     {
-        var lbl = new Label { Text = label, AutoSize = false, Height = 24, Dock = DockStyle.Fill, TextAlign = ContentAlignment.MiddleLeft };
-        var chk = new CheckBox { Checked = isChecked, Dock = DockStyle.Left, AutoSize = true };
-        TLP_Settings.Controls.Add(lbl, 0, _row);
-        TLP_Settings.Controls.Add(chk, 1, _row);
-        _row++;
-        return chk;
-    }
-
-    private NumericUpDown AddNumericRow(string label, int value, int min, int max)
-    {
-        var lbl = new Label { Text = label, AutoSize = false, Height = 24, Dock = DockStyle.Fill, TextAlign = ContentAlignment.MiddleLeft };
-        var nud = new NumericUpDown { Minimum = min, Maximum = max, Value = Math.Clamp(value, min, max), Width = 80, Dock = DockStyle.Left };
-        TLP_Settings.Controls.Add(lbl, 0, _row);
-        TLP_Settings.Controls.Add(nud, 1, _row);
-        _row++;
-        return nud;
-    }
-
-    // ConfigSave9 uses inverted logic: On=0, Off=1.
-    private static bool IsOn(ConfigOption9 opt) => opt == ConfigOption9.On;
-    private static ConfigOption9 ToOpt(bool on) => on ? ConfigOption9.On : ConfigOption9.Off;
-
-    private ComboBox _cbTextSpeed = null!;
-    private ComboBox _cbSendToBoxes = null!;
-    private CheckBox _chkSkipMoveLearning = null!, _chkGiveNicknames = null!;
-    private ComboBox _cbVerticalCamera = null!, _cbHorizontalCamera = null!;
-    private CheckBox _chkAutoSave = null!, _chkShowNicknames = null!, _chkSkipCutscenes = null!;
-    private NumericUpDown _nudBGM = null!, _nudSE = null!, _nudCry = null!;
-    private CheckBox _chkRumble = null!, _chkHelp = null!;
-    private ComboBox _cbCameraSupport = null!, _cbCameraInterp = null!, _cbCameraDist = null!, _cbControlsWhileFlying = null!;
-
-    private void BuildVanillaSettings()
-    {
-        AddSectionHeader("Vanilla S/V Settings");
-
-        _cbTextSpeed = AddComboRow("Text Speed", ["Slow", "Normal", "Fast"], Config.TalkingSpeed);
-        _chkSkipMoveLearning = AddCheckRow("Skip Move Learning", IsOn(Config.SkipMoveLearning));
-        // PromptSendToBox: Manual = ConfigOption9.On = 0, Auto = ConfigOption9.Off = 1
-        _cbSendToBoxes = AddComboRow("Send to Boxes", ["Manual", "Auto"], (int)Config.PromptSendToBox);
-        _chkGiveNicknames = AddCheckRow("Give Nicknames", IsOn(Config.PromptGiveNickname));
-        _cbVerticalCamera = AddComboRow("Vertical Camera Controls", ["Regular", "Inverted"], (int)Config.InvertCameraVertical);
-        _cbHorizontalCamera = AddComboRow("Horizontal Camera Controls", ["Regular", "Inverted"], (int)Config.InvertCameraHorizontal);
-        _cbCameraSupport = AddComboRow("Camera Support", ["On", "Off"], (int)Camera.CameraSupport);
-        _cbCameraInterp = AddComboRow("Camera Interpolation", ["Slow", "Normal"], (int)Camera.CameraInterpolation);
-        _cbCameraDist = AddComboRow("Camera Distance", ["Close", "Normal", "Far"], (int)Camera.CameraDistance);
-        _chkAutoSave = AddCheckRow("Autosave", IsOn(Config.EnableAutoSave));
-        // ShowNicknames: Show = ConfigOption9.On = 0, Don't show = ConfigOption9.Off = 1
-        _chkShowNicknames = AddCheckRow("Show Nicknames", IsOn(Config.ShowNicknames));
-        _chkSkipCutscenes = AddCheckRow("Skip Cutscenes", IsOn(Config.SkipCutscenes));
-        _nudBGM = AddNumericRow("Background Music Volume", Config.VolumeBGM, 0, 10);
-        _nudSE = AddNumericRow("Sound Effects Volume", Config.VolumeSE, 0, 10);
-        _nudCry = AddNumericRow("Pokémon Cries Volume", Config.VolumeCry, 0, 10);
-        _chkRumble = AddCheckRow("Controller Rumble", IsOn(Config.EnableRumble));
-        _chkHelp = AddCheckRow("Helping Functions", IsOn(Config.EnableHelp));
-        // Controls while Flying: bit 4 of KConfigCamera (Regular = 0, Inverted = 1)
-        // NOTE: bit position inferred from layout - verify against save comparison if issues arise.
-        _cbControlsWhileFlying = AddComboRow("Controls while Flying", ["Regular", "Inverted"], (int)Camera.ControlsWhileFlying);
-
+        AddSectionHeader("Compass Toolkit");
+        AddInfoRow("Edits in this window only affect Compass-specific modifiers. Vanilla in-game settings were intentionally removed and should be changed inside the game itself.");
         AddSeparator();
     }
 
@@ -163,7 +156,31 @@ public partial class SAV_CompassEditor : Form
     private ComboBox _cbCaptureBonus = null!;
     private ComboBox _cbSpawnRate = null!;
     private ComboBox _cbAnimRate = null!;
-    private readonly List<(uint Key, NumericUpDown Nud)> _compassUInt64s = [];
+    private ComboBox _cbPreset = null!;
+    private Label _lSummary = null!;
+
+    private enum CompassPreset
+    {
+        RecommendedQoL,
+        FastGrind,
+        ChallengeRun,
+    }
+
+    private void BuildQuickActions()
+    {
+        AddSectionHeader("Quick Actions");
+
+        _cbPreset = AddComboRow("Preset", ["Recommended QoL", "Fast Grind", "Challenge Run"], 0);
+        AddActionButtonsRow(
+            CreateActionButton("Apply Preset", B_ApplyPreset_Click),
+            CreateActionButton("Reset to Compass Defaults", B_ResetDefaults_Click),
+            CreateActionButton("Open Capture Bonuses", B_OpenCaptureBonus_Click),
+            CreateActionButton("Open Story Flags", B_OpenStoryFlags_Click)
+        );
+
+        _lSummary = AddInfoRow(string.Empty);
+        AddSeparator();
+    }
 
     private static int GetSByteBlockValue(SCBlockAccessor blocks, uint key, int defaultVal = 0)
     {
@@ -180,16 +197,13 @@ public partial class SAV_CompassEditor : Form
 
     private void BuildCompassSettings()
     {
-        AddSectionHeader("Compass Settings");
+        AddSectionHeader("Gameplay Modifiers");
 
         // Shiny Notification
         int shinyVal = GetSByteBlockValue(Blocks, KShinyNotification);
         _cbShinyNotif = AddComboRow("Shiny Notification",
             ["Spoiler-Free", "Full", "Off"],
             shinyVal switch { 1 => 1, 2 => 2, _ => 0 });
-
-        AddSeparator();
-        AddSectionHeader("Gameplay Modifiers");
 
         // Level Cap: raw 0 = No Cap (Level 100), 1–99 = hard cap at that level
         var levelCapItems = new string[100];
@@ -236,17 +250,117 @@ public partial class SAV_CompassEditor : Form
         // Animation Quality: 0=High, 1=Medium, 2=Low
         int animRateVal = Math.Clamp(GetSByteBlockValue(Blocks, KAnimRate), 0, 2);
         _cbAnimRate = AddComboRow("Animation Quality", ["High", "Medium", "Low"], animRateVal);
+    }
 
-        // UInt64 blocks - purpose unconfirmed; show in raw data panel only
-        foreach (var (key, label) in UInt64OptionLabels)
+    private void HookSummaryRefresh()
+    {
+        foreach (var cb in new[]
+                 {
+                     _cbShinyNotif, _cbLevelCap, _cbExpMulti, _cbLetsGoEV,
+                     _cbExpShare, _cbPicnicExp, _cbCaptureBonus, _cbSpawnRate, _cbAnimRate,
+                 })
+            cb.SelectedIndexChanged += (_, _) => RefreshSummary();
+    }
+
+    private void RefreshSummary()
+    {
+        _lSummary.Text =
+            $"Current profile:\n" +
+            $"- Level Cap: {GetLevelCapLabel(_cbLevelCap.SelectedIndex)}\n" +
+            $"- EXP Multiplier: {GetExpMultiLabel(_cbExpMulti.SelectedIndex)}\n" +
+            $"- Exp Share / Picnic EXP: {GetExpShareLabel(_cbExpShare.SelectedIndex)} / {GetPicnicExpLabel(_cbPicnicExp.SelectedIndex)}\n" +
+            $"- Capture Bonuses: {GetCaptureBonusLabel(_cbCaptureBonus.SelectedIndex)} | Spawns: {GetSpawnRateLabel(_cbSpawnRate.SelectedIndex)} | Animations: {GetAnimRateLabel(_cbAnimRate.SelectedIndex)}";
+    }
+
+    private void ApplyPreset(CompassPreset preset)
+    {
+        // Defaults are explicit so preset behavior remains stable across updates.
+        switch (preset)
         {
-            if (!Blocks.TryGetBlock(key, out var block) || block.Type != SCTypeCode.UInt64)
-                continue;
-            ulong val = (ulong)block.GetValue();
-            int clamped = val > int.MaxValue ? int.MaxValue : (int)val;
-            var nud = AddNumericRow(label, clamped, 0, int.MaxValue);
-            _compassUInt64s.Add((key, nud));
+            case CompassPreset.RecommendedQoL:
+                _cbShinyNotif.SelectedIndex = 0;
+                _cbLevelCap.SelectedIndex = 0;
+                _cbExpMulti.SelectedIndex = 4; // 100%
+                _cbLetsGoEV.SelectedIndex = 0; // Party
+                _cbExpShare.SelectedIndex = 0; // On
+                _cbPicnicExp.SelectedIndex = 0; // On
+                _cbCaptureBonus.SelectedIndex = 0; // On
+                _cbSpawnRate.SelectedIndex = 2; // 30 Pokemon
+                _cbAnimRate.SelectedIndex = 1; // Medium
+                break;
+            case CompassPreset.FastGrind:
+                _cbShinyNotif.SelectedIndex = 1; // Full
+                _cbLevelCap.SelectedIndex = 0;
+                _cbExpMulti.SelectedIndex = 9; // 150%
+                _cbLetsGoEV.SelectedIndex = 0;
+                _cbExpShare.SelectedIndex = 0;
+                _cbPicnicExp.SelectedIndex = 0;
+                _cbCaptureBonus.SelectedIndex = 0;
+                _cbSpawnRate.SelectedIndex = 4; // 50 Pokemon
+                _cbAnimRate.SelectedIndex = 2; // Low
+                break;
+            case CompassPreset.ChallengeRun:
+                _cbShinyNotif.SelectedIndex = 0;
+                _cbLevelCap.SelectedIndex = 55;
+                _cbExpMulti.SelectedIndex = 0; // 60%
+                _cbLetsGoEV.SelectedIndex = 1; // Leader
+                _cbExpShare.SelectedIndex = 1; // Off
+                _cbPicnicExp.SelectedIndex = 1; // Off
+                _cbCaptureBonus.SelectedIndex = 1; // Off
+                _cbSpawnRate.SelectedIndex = 1; // 20 Pokemon
+                _cbAnimRate.SelectedIndex = 0; // High
+                break;
+            default:
+                throw new ArgumentOutOfRangeException(nameof(preset), preset, null);
         }
+
+        RefreshSummary();
+    }
+
+    private void SetCompassDefaults()
+    {
+        _cbShinyNotif.SelectedIndex = 0;
+        _cbLevelCap.SelectedIndex = 0;
+        _cbExpMulti.SelectedIndex = 0;
+        _cbLetsGoEV.SelectedIndex = 0;
+        _cbExpShare.SelectedIndex = 0;
+        _cbPicnicExp.SelectedIndex = 0;
+        _cbCaptureBonus.SelectedIndex = 0;
+        _cbSpawnRate.SelectedIndex = 0;
+        _cbAnimRate.SelectedIndex = 0;
+        RefreshSummary();
+    }
+
+    private void B_ApplyPreset_Click(object? sender, EventArgs e)
+    {
+        if (!ConfirmEdit())
+            return;
+
+        _loading = true;
+        ApplyPreset((CompassPreset)_cbPreset.SelectedIndex);
+        _loading = false;
+    }
+
+    private void B_ResetDefaults_Click(object? sender, EventArgs e)
+    {
+        if (!ConfirmEdit())
+            return;
+
+        _loading = true;
+        SetCompassDefaults();
+        _loading = false;
+    }
+
+    private void B_OpenCaptureBonus_Click(object? sender, EventArgs e)
+    {
+        using var dlg = new SAV_CaptureBonus(SAV);
+        dlg.ShowDialog(this);
+    }
+
+    private void B_OpenStoryFlags_Click(object? sender, EventArgs e)
+    {
+        using var dlg = new SAV_CompassStoryFlags(SAV);
+        dlg.ShowDialog(this);
     }
 
     private void LoadRawData()
@@ -346,26 +460,6 @@ public partial class SAV_CompassEditor : Form
         if (!ConfirmEdit())
             return;
 
-        Config.TalkingSpeed = _cbTextSpeed.SelectedIndex;
-        Config.SkipMoveLearning = ToOpt(_chkSkipMoveLearning.Checked);
-        Config.PromptSendToBox = (ConfigOption9)_cbSendToBoxes.SelectedIndex;
-        Config.PromptGiveNickname = ToOpt(_chkGiveNicknames.Checked);
-        Config.InvertCameraVertical = (ConfigOption9)_cbVerticalCamera.SelectedIndex;
-        Config.InvertCameraHorizontal = (ConfigOption9)_cbHorizontalCamera.SelectedIndex;
-        Config.EnableAutoSave = ToOpt(_chkAutoSave.Checked);
-        Config.ShowNicknames = ToOpt(_chkShowNicknames.Checked);
-        Config.SkipCutscenes = ToOpt(_chkSkipCutscenes.Checked);
-        Config.VolumeBGM = (int)_nudBGM.Value;
-        Config.VolumeSE = (int)_nudSE.Value;
-        Config.VolumeCry = (int)_nudCry.Value;
-        Config.EnableRumble = ToOpt(_chkRumble.Checked);
-        Config.EnableHelp = ToOpt(_chkHelp.Checked);
-
-        Camera.CameraSupport = (ConfigOption9)_cbCameraSupport.SelectedIndex;
-        Camera.CameraInterpolation = (CameraInterpolation9)_cbCameraInterp.SelectedIndex;
-        Camera.CameraDistance = (CameraDistance9)_cbCameraDist.SelectedIndex;
-        Camera.ControlsWhileFlying = (ConfigOption9)_cbControlsWhileFlying.SelectedIndex;
-
         int shinyVal = _cbShinyNotif.SelectedIndex switch { 1 => 1, 2 => 2, _ => 0 };
         SetSByteBlockValue(Blocks, KShinyNotification, shinyVal);
 
@@ -377,12 +471,6 @@ public partial class SAV_CompassEditor : Form
         SetSByteBlockValue(Blocks, KRNGSkew, _cbCaptureBonus.SelectedIndex);
         SetSByteBlockValue(Blocks, KSpawnRate, _cbSpawnRate.SelectedIndex);
         SetSByteBlockValue(Blocks, KAnimRate, _cbAnimRate.SelectedIndex);
-
-        foreach (var (key, nud) in _compassUInt64s)
-        {
-            if (Blocks.TryGetBlock(key, out var block) && block.Type == SCTypeCode.UInt64)
-                block.SetValue((ulong)nud.Value);
-        }
 
         Origin.CopyChangesFrom(SAV);
         Close();

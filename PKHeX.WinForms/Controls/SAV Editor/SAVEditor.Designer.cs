@@ -104,7 +104,6 @@ namespace PKHeX.WinForms.Controls
             B_OpenGear = new System.Windows.Forms.Button();
             B_OpenFashion = new System.Windows.Forms.Button();
             B_CaptureBonus = new System.Windows.Forms.Button();
-            B_GameSettings = new System.Windows.Forms.Button();
             B_StoryFlags = new System.Windows.Forms.Button();
             B_GivePechaBerry = new System.Windows.Forms.Button();
             FLP_SAVToolsMisc = new System.Windows.Forms.FlowLayoutPanel();
@@ -470,7 +469,6 @@ namespace PKHeX.WinForms.Controls
             // FLP_CompassTools
             // 
             FLP_CompassTools.Controls.Add(B_CaptureBonus);
-            FLP_CompassTools.Controls.Add(B_GameSettings);
             FLP_CompassTools.Controls.Add(B_StoryFlags);
             FLP_CompassTools.Controls.Add(B_GivePechaBerry);
             FLP_CompassTools.Location = new System.Drawing.Point(0, 92);
@@ -668,23 +666,14 @@ namespace PKHeX.WinForms.Controls
             B_CaptureBonus.Text = "Capture\r\nBonuses";
             B_CaptureBonus.UseVisualStyleBackColor = true;
             B_CaptureBonus.Click += B_CaptureBonus_Click;
-            // B_GameSettings
-            B_GameSettings.Location = new System.Drawing.Point(108, 4);
-            B_GameSettings.Margin = new System.Windows.Forms.Padding(4);
-            B_GameSettings.Name = "B_GameSettings";
-            B_GameSettings.Size = new System.Drawing.Size(96, 40);
-            B_GameSettings.TabIndex = 14;
-            B_GameSettings.Text = "Game\r\nSettings";
-            B_GameSettings.UseVisualStyleBackColor = true;
-            B_GameSettings.Click += B_GameSettings_Click;
             // 
             // B_StoryFlags
             // 
-            B_StoryFlags.Location = new System.Drawing.Point(212, 4);
+            B_StoryFlags.Location = new System.Drawing.Point(108, 4);
             B_StoryFlags.Margin = new System.Windows.Forms.Padding(4);
             B_StoryFlags.Name = "B_StoryFlags";
             B_StoryFlags.Size = new System.Drawing.Size(96, 40);
-            B_StoryFlags.TabIndex = 15;
+            B_StoryFlags.TabIndex = 14;
             B_StoryFlags.Text = "Flags";
             B_StoryFlags.UseVisualStyleBackColor = true;
             B_StoryFlags.Click += B_StoryFlags_Click;
@@ -695,7 +684,7 @@ namespace PKHeX.WinForms.Controls
             B_GivePechaBerry.Margin = new System.Windows.Forms.Padding(4);
             B_GivePechaBerry.Name = "B_GivePechaBerry";
             B_GivePechaBerry.Size = new System.Drawing.Size(96, 40);
-            B_GivePechaBerry.TabIndex = 13;
+            B_GivePechaBerry.TabIndex = 15;
             B_GivePechaBerry.Text = "Pecha\r\nBerry";
             B_GivePechaBerry.UseVisualStyleBackColor = true;
             B_GivePechaBerry.Click += B_GivePechaBerry_Click;
@@ -1205,7 +1194,6 @@ namespace PKHeX.WinForms.Controls
         private System.Windows.Forms.Button B_OpenFashion;
         private System.Windows.Forms.Button B_Donuts;
         private System.Windows.Forms.Button B_CaptureBonus;
-        private System.Windows.Forms.Button B_GameSettings;
         private System.Windows.Forms.Button B_StoryFlags;
         private System.Windows.Forms.Button B_GivePechaBerry;
         private System.Windows.Forms.Button B_SearchBox;

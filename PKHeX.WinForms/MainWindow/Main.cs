@@ -780,7 +780,7 @@ public partial class Main : Form
                 var result = WinFormsUtil.Prompt(MessageBoxButtons.YesNo,
                     "Pokémon Compass save detected (older version).",
                     "This save is missing Compass v2.1.x blocks (settings, capture bonuses, feature flags).\n" +
-                    "These blocks are required for the Game Settings and Capture Bonus editors.\n\n" +
+                    "These blocks are required for the Capture Bonus editor.\n\n" +
                     "Add the missing blocks with default values?\n" +
                     "(The save will not be modified on disk until you export it.)");
                 if (result == DialogResult.Yes)
